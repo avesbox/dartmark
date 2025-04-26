@@ -1,0 +1,298 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load .dockerignore
+#1 transferring context: 2B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 609B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/nginx:alpine
+#3 DONE 0.3s
+
+#4 [internal] load metadata for docker.io/library/dart:stable
+#4 DONE 0.4s
+
+#5 [internal] load metadata for docker.io/library/node:23-slim
+#5 DONE 0.3s
+
+#6 [benchmark 1/8] FROM docker.io/library/dart:stable@sha256:52497b20476fd84cb9f0d63a008b306d75f56f44e54431e510b8cf0e4cc4534a
+#6 DONE 0.0s
+
+#7 [build_docs  1/10] FROM docker.io/library/node:23-slim@sha256:dfb18d8011c0b3a112214a32e772d9c6752131ffee512e974e59367e46fcee52
+#7 DONE 0.0s
+
+#8 [benchmark 2/8] WORKDIR /app
+#8 CACHED
+
+#9 [stage-2 1/2] FROM docker.io/library/nginx:alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#9 CACHED
+
+#10 [build_docs  2/10] WORKDIR /app/docs
+#10 CACHED
+
+#11 [internal] load build context
+#11 transferring context: 374.78kB 0.2s done
+#11 DONE 0.2s
+
+#12 [build_docs  3/10] COPY /docs/package.json .
+#12 DONE 0.1s
+
+#13 [benchmark 3/8] COPY pubspec.* .
+#13 DONE 0.1s
+
+#14 [benchmark 4/8] RUN dart pub get
+#14 0.700 Resolving dependencies...
+#14 1.507 Downloading packages...
+#14 5.383   _fe_analyzer_shared 80.0.0 (82.0.0 available)
+#14 5.383   analyzer 7.3.0 (7.4.4 available)
+#14 5.383   lints 5.1.1 (6.0.0 available)
+#14 5.383   web_socket 0.1.6 (1.0.0 available)
+#14 5.383   web_socket_channel 3.0.2 (3.0.3 available)
+#14 5.385 Got dependencies!
+#14 5.386 5 packages have newer versions incompatible with dependency constraints.
+#14 5.386 Try `dart pub outdated` for more information.
+#14 DONE 6.5s
+
+#15 [build_docs  4/10] RUN npm install
+#15 ...
+
+#16 [benchmark 5/8] COPY . .
+#16 DONE 3.5s
+
+#15 [build_docs  4/10] RUN npm install
+#15 ...
+
+#17 [benchmark 6/8] RUN dart pub get --offline
+#17 0.509 Resolving dependencies...
+#17 0.980 Downloading packages...
+#17 0.998 Got dependencies!
+#17 ...
+
+#15 [build_docs  4/10] RUN npm install
+#15 11.22 
+#15 11.22 added 130 packages, and audited 131 packages in 10s
+#15 11.22 
+#15 11.22 38 packages are looking for funding
+#15 11.22   run `npm fund` for details
+#15 11.23 
+#15 11.23 3 moderate severity vulnerabilities
+#15 11.23 
+#15 11.23 To address all issues (including breaking changes), run:
+#15 11.23   npm audit fix --force
+#15 11.23 
+#15 11.23 Run `npm audit` for details.
+#15 11.23 npm notice
+#15 11.23 npm notice New major version of npm available! 10.9.2 -> 11.3.0
+#15 11.23 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.3.0
+#15 11.23 npm notice To update run: npm install -g npm@11.3.0
+#15 11.23 npm notice
+#15 DONE 12.0s
+
+#17 [benchmark 6/8] RUN dart pub get --offline
+#17 DONE 2.0s
+
+#18 [benchmark 7/8] RUN ls -la
+#18 ...
+
+#19 [build_docs  5/10] RUN ls -la
+#19 0.778 total 104
+#19 0.778 drwxr-xr-x  1 root root  4096 Apr 26 16:08 .
+#19 0.778 drwxr-xr-x  1 root root  4096 Apr 26 15:42 ..
+#19 0.778 drwxr-xr-x 83 root root  4096 Apr 26 16:08 node_modules
+#19 0.778 -rw-r--r--  1 root root 85614 Apr 26 16:08 package-lock.json
+#19 0.778 -rwxr-xr-x  1 root root   312 Apr 15 23:21 package.json
+#19 DONE 0.8s
+
+#20 [build_docs  6/10] COPY ./docs/. .
+#20 ...
+
+#18 [benchmark 7/8] RUN ls -la
+#18 1.475 total 80
+#18 1.475 drwxr-xr-x 1 root root  4096 Apr 26 16:07 .
+#18 1.475 drwxr-xr-x 1 root root  4096 Apr 26 16:08 ..
+#18 1.475 drwxr-xr-x 1 root root  4096 Apr 16 17:07 .dart_tool
+#18 1.475 drwxr-xr-x 8 root root  4096 Apr 17 13:53 .git
+#18 1.475 -rwxr-xr-x 1 root root   119 Apr 15 23:21 .gitignore
+#18 1.475 -rwxr-xr-x 1 root root    32 Apr 15 23:21 CHANGELOG.md
+#18 1.475 -rwxr-xr-x 1 root root   570 Apr 26 16:07 Dockerfile
+#18 1.475 -rwxr-xr-x 1 root root   124 Apr 15 23:21 README.md
+#18 1.475 -rwxr-xr-x 1 root root  1068 Apr 15 23:21 analysis_options.yaml
+#18 1.475 drwxr-xr-x 2 root root  4096 Apr 26 15:24 bin
+#18 1.475 -rwxr-xr-x 1 root root   394 Apr 26 16:07 build.log
+#18 1.475 drwxr-xr-x 7 root root  4096 Apr 26 15:48 docs
+#18 1.475 drwxr-xr-x 3 root root  4096 Apr 15 23:21 lib
+#18 1.475 -rwxr-xr-x 1 root root 14405 Apr 26 16:08 pubspec.lock
+#18 1.475 -rwxr-xr-x 1 root root   473 Apr 26 14:26 pubspec.yaml
+#18 DONE 2.3s
+
+#20 [build_docs  6/10] COPY ./docs/. .
+#20 DONE 1.6s
+
+#21 [build_docs  7/10] RUN ls -la /app/docs/data
+#21 1.032 total 12
+#21 1.032 drwxr-xr-x 2 root root 4096 Apr 26 15:49 .
+#21 1.032 drwxr-xr-x 1 root root 4096 Apr 26 15:48 ..
+#21 DONE 1.1s
+
+#22 [benchmark 8/8] RUN dart run
+#22 1.535 Starting benchmarks for ack...
+#22 63.63 Benchmarks for ack completed successfully.
+#22 63.64 Starting benchmarks for vine...
+#22 95.85 Benchmarks for vine completed successfully.
+#22 95.85 Starting benchmarks for luthor...
+#22 128.2 Benchmarks for luthor completed successfully.
+#22 128.2 Starting benchmarks for acanthis...
+#22 191.1 Benchmarks for acanthis completed successfully.
+#22 191.1 Starting benchmarks for validart...
+#22 254.3 Benchmarks for validart completed successfully.
+#22 DONE 254.3s
+
+#23 [build_docs  8/10] COPY --from=benchmark /app/docs/data ./data
+#23 DONE 0.0s
+
+#24 [build_docs  9/10] RUN ls -la
+#24 0.438 total 136
+#24 0.438 drwxr-xr-x 1 root root  4096 Apr 26 15:48 .
+#24 0.438 drwxr-xr-x 1 root root  4096 Apr 26 15:42 ..
+#24 0.438 drwxr-xr-x 4 root root  4096 Apr 26 15:49 .vitepress
+#24 0.438 -rwxr-xr-x 1 root root   484 Apr 26 15:48 build.log
+#24 0.438 drwxr-xr-x 3 root root  4096 Apr 23 16:52 components
+#24 0.438 drwxr-xr-x 1 root root  4096 Apr 26 16:08 data
+#24 0.438 -rwxr-xr-x 1 root root   190 Apr 15 23:21 index.md
+#24 0.438 drwxr-xr-x 1 root root  4096 Apr 15 23:23 node_modules
+#24 0.438 -rwxr-xr-x 1 root root 85617 Apr 15 23:23 package-lock.json
+#24 0.438 -rwxr-xr-x 1 root root   312 Apr 15 23:21 package.json
+#24 0.438 drwxr-xr-x 3 root root  4096 Apr 23 14:16 public
+#24 DONE 0.5s
+
+#25 [build_docs 10/10] RUN npm run docs:build
+#25 0.613 
+#25 0.613 > docs:build
+#25 0.613 > vitepress build
+#25 0.613 
+#25 0.865 
+#25 0.865   vitepress v1.6.3
+#25 0.865 
+#25 0.868 - building client + server bundles...
+#25 2.836 Ô£ô building client + server bundles...
+#25 2.853 - rendering pages...
+#25 2.875 data {
+#25 2.875   group: 'ack',
+#25 2.875   flat_object: 168162.7,
+#25 2.875   flat_array: 78540.8,
+#25 2.875   nested_object: 103940.3,
+#25 2.875   nested_array: 38047.8,
+#25 2.875   deeply_nested_object: 74763.7,
+#25 2.875   deeply_nested_array: 17639.1,
+#25 2.875   version: '^0.1.2'
+#25 2.875 }
+#25 2.875 data {
+#25 2.875   group: 'vine',
+#25 2.875   flat_object: 392322.4,
+#25 2.875   flat_array: 0,
+#25 2.875   nested_object: 259264.9,
+#25 2.875   nested_array: 0,
+#25 2.875   deeply_nested_object: 192337,
+#25 2.875   deeply_nested_array: 0,
+#25 2.875   version: '^1.4.0'
+#25 2.875 }
+#25 2.875 data {
+#25 2.875   group: 'luthor',
+#25 2.875   flat_object: 662158.3,
+#25 2.875   flat_array: 0,
+#25 2.875   nested_object: 451956.4,
+#25 2.875   nested_array: 0,
+#25 2.875   deeply_nested_object: 343506.7,
+#25 2.875   deeply_nested_array: 0,
+#25 2.875   version: '^0.6.0'
+#25 2.875 }
+#25 2.875 data {
+#25 2.875   group: 'acanthis',
+#25 2.875   flat_object: 587316.4,
+#25 2.875   flat_array: 361868.4,
+#25 2.875   nested_object: 400859.8,
+#25 2.875   nested_array: 186878.3,
+#25 2.875   deeply_nested_object: 303517.1,
+#25 2.875   deeply_nested_array: 97098.2,
+#25 2.875   version: '^1.2.1'
+#25 2.875 }
+#25 2.876 data {
+#25 2.876   group: 'validart',
+#25 2.876   flat_object: 727240,
+#25 2.876   flat_array: 549750.2,
+#25 2.876   nested_object: 493730.3,
+#25 2.876   nested_array: 302184.1,
+#25 2.876   deeply_nested_object: 379972.2,
+#25 2.876   deeply_nested_array: 175450,
+#25 2.876   version: '^0.1.2'
+#25 2.876 }
+#25 2.876 [
+#25 2.876   {
+#25 2.876     group: 'validart',
+#25 2.876     flat_object: 727240,
+#25 2.876     flat_array: 549750.2,
+#25 2.876     nested_object: 493730.3,
+#25 2.876     nested_array: 302184.1,
+#25 2.876     deeply_nested_object: 379972.2,
+#25 2.876     deeply_nested_array: 175450,
+#25 2.876     version: '^0.1.2'
+#25 2.876   },
+#25 2.876   {
+#25 2.876     group: 'luthor',
+#25 2.876     flat_object: 662158.3,
+#25 2.876     flat_array: 0,
+#25 2.876     nested_object: 451956.4,
+#25 2.876     nested_array: 0,
+#25 2.876     deeply_nested_object: 343506.7,
+#25 2.876     deeply_nested_array: 0,
+#25 2.876     version: '^0.6.0'
+#25 2.876   },
+#25 2.876   {
+#25 2.876     group: 'acanthis',
+#25 2.876     flat_object: 587316.4,
+#25 2.876     flat_array: 361868.4,
+#25 2.876     nested_object: 400859.8,
+#25 2.876     nested_array: 186878.3,
+#25 2.876     deeply_nested_object: 303517.1,
+#25 2.876     deeply_nested_array: 97098.2,
+#25 2.876     version: '^1.2.1'
+#25 2.876   },
+#25 2.876   {
+#25 2.876     group: 'vine',
+#25 2.876     flat_object: 392322.4,
+#25 2.876     flat_array: 0,
+#25 2.876     nested_object: 259264.9,
+#25 2.876     nested_array: 0,
+#25 2.876     deeply_nested_object: 192337,
+#25 2.876     deeply_nested_array: 0,
+#25 2.876     version: '^1.4.0'
+#25 2.876   },
+#25 2.876   {
+#25 2.876     group: 'ack',
+#25 2.876     flat_object: 168162.7,
+#25 2.876     flat_array: 78540.8,
+#25 2.876     nested_object: 103940.3,
+#25 2.876     nested_array: 38047.8,
+#25 2.876     deeply_nested_object: 74763.7,
+#25 2.876     deeply_nested_array: 17639.1,
+#25 2.876     version: '^0.1.2'
+#25 2.876   }
+#25 2.876 ]
+#25 2.901 Ô£ô rendering pages...
+#25 2.904 build complete in 2.06s.
+#25 DONE 3.0s
+
+#26 [stage-2 2/2] COPY --from=build_docs /app/docs/.vitepress/dist /usr/share/nginx/html
+#26 DONE 0.1s
+
+#27 exporting to image
+#27 exporting layers 0.0s done
+#27 writing image sha256:f7c9b9aa9d6b2f3def470259faa9a086bb50f55fa7932ec6a4bfcaf579d4eb9b done
+#27 DONE 0.0s
+
+View build details: docker-desktop://dashboard/build/default/default/om2z7okfzo505foorb3hibyma
+
+What's Next?
+  View a summary of image vulnerabilities and recommendations ÔåÆ docker scout quickview

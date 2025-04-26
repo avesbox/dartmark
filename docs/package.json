@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.8",
+    "vitepress": "^1.6.3",
+    "vue-chartjs": "^5.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1"
+  }
+}
