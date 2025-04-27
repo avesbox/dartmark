@@ -5,108 +5,121 @@ import 'package:tyto/tyto.dart';
 import 'package:dartmark/src/objects.dart';
 import 'package:dartmark/src/package.dart';
 
+
+  final flatObjectSchema = object({
+    'number': number(),
+    'negNumber': number(),
+    'infiniteNumber': number(),
+    'string': string(),
+    'longString': string(),
+    'boolean': boolean(),
+  });
+
+  final nestedObjectSchema = object({
+    'number': number(),
+    'negNumber': number(),
+    'infiniteNumber': number(),
+    'string': string(),
+    'longString': string(),
+    'boolean': boolean(),
+    'deeplyNested': object({
+      'foo': string(),
+      'num': number(),
+      'bool': boolean(),
+    }),
+  });
+
+  final deeplyNestedObjectSchema = object({
+    'number': number(),
+    'negNumber': number(),
+    'infiniteNumber': number(),
+    'string': string(),
+    'longString': string(),
+    'boolean': boolean(),
+    'deeplyNested': object({
+      'foo': string(),
+      'num': number(),
+      'bool': boolean(),
+      'deeplyNested2': object({
+        'foo2': string(),
+        'num2': number(),
+        'bool2': boolean(),
+      }),
+    }),
+  });
+
+  final flatArraySchema = object({
+    'number': number(),
+    'negNumber': number(),
+    'infiniteNumber': number(),
+    'string': string(),
+    'longString': string(),
+    'boolean': boolean(),
+  }).list();
+
+  final nestedArraySchema = object({
+    'number': number(),
+    'negNumber': number(),
+    'infiniteNumber': number(),
+    'string': string(),
+    'longString': string(),
+    'boolean': boolean(),
+    'deeplyNested': object({
+      'foo': string(),
+      'num': number(),
+      'bool': boolean(),
+    }).list(),
+  }).list();
+
+  final deeplyNestedArraySchema = object({
+    'number': number(),
+    'negNumber': number(),
+    'infiniteNumber': number(),
+    'string': string(),
+    'longString': string(),
+    'boolean': boolean(),
+    'deeplyNested': object({
+      'foo': string(),
+      'num': number(),
+      'bool': boolean(),
+      'deeplyNested2': object({
+        'foo2': string(),
+        'num2': number(),
+        'bool2': boolean(),
+      }).list(),
+    }).list(),
+  }).list();
+
 class AcanthisBench extends Pacakge {
   
   @override
   void parseFlatObject(Map<String, dynamic> json) {
-      object({
-      'number': number(),
-      'negNumber': number(),
-      'infiniteNumber': number(),
-      'string': string(),
-      'longString': string(),
-      'boolean': boolean(),
-    }).parse(json);
+    flatObjectSchema.parse(json);
   }
 
   @override
   void parseNestedObject(Map<String, dynamic> json) {
-    object({
-      'number': number(),
-      'negNumber': number(),
-      'infiniteNumber': number(),
-      'string': string(),
-      'longString': string(),
-      'boolean': boolean(),
-      'deeplyNested': object({
-        'foo': string(),
-        'num': number(),
-        'bool': boolean(),
-      }),
-    }).parse(json);
+    nestedObjectSchema.parse(json);
   }
 
   @override
   void parseDeeplyNestedObject(Map<String, dynamic> json) {
-    object({
-      'number': number(),
-      'negNumber': number(),
-      'infiniteNumber': number(),
-      'string': string(),
-      'longString': string(),
-      'boolean': boolean(),
-      'deeplyNested': object({
-        'foo': string(),
-        'num': number(),
-        'bool': boolean(),
-        'deeplyNested2': object({
-          'foo2': string(),
-          'num2': number(),
-          'bool2': boolean(),
-        }),
-      }),
-    }).parse(json);
+    deeplyNestedObjectSchema.parse(json);
   }
 
   @override
   void parseFlatArray(List<Map<String, dynamic>> json) {
-    object({
-        'number': number(),
-        'negNumber': number(),
-        'infiniteNumber': number(),
-        'string': string(),
-        'longString': string(),
-        'boolean': boolean(),
-      }).list().parse(json);
+    flatArraySchema.parse(json);
   }
 
   @override
   void parseNestedArray(List<Map<String, dynamic>> json) {
-    object({
-        'number': number(),
-        'negNumber': number(),
-        'infiniteNumber': number(),
-        'string': string(),
-        'longString': string(),
-        'boolean': boolean(),
-        'deeplyNested': object({
-          'foo': string(),
-          'num': number(),
-          'bool': boolean(),
-        }).list(),
-      }).list().parse(json);
+    nestedArraySchema.parse(json);
   }
 
   @override
   void parseDeeplyNestedArray(List<Map<String, dynamic>> json) {
-    object({
-        'number': number(),
-        'negNumber': number(),
-        'infiniteNumber': number(),
-        'string': string(),
-        'longString': string(),
-        'boolean': boolean(),
-        'deeplyNested': object({
-          'foo': string(),
-          'num': number(),
-          'bool': boolean(),
-          'deeplyNested2': object({
-            'foo2': string(),
-            'num2': number(),
-            'bool2': boolean(),
-          }).list(),
-        }).list(),
-      }).list().parse(json);
+    deeplyNestedArraySchema.parse(json);
   }
 
   @override
