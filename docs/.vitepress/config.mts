@@ -6,7 +6,7 @@ export default defineConfig({
   head: [
     ['link', { rel: "icon", type: "image/png", sizes: "32x32", href: "/logo-32x32.png"}],
     ['link', { rel: "icon", type: "image/png", sizes: "16x16", href: "/logo-16x16.png"}],
-    ['meta', { property: 'og:title', content: 'Validation Bench'}],
+    ['meta', { property: 'og:title', content: 'Dartmark'}],
     ['meta', { name: 'description', content: 'Benchmarking validation libraries for Dart & Flutter'}],
     ['meta', { property: 'og:description', content: 'Benchmarking validation libraries for Dart & Flutter'}],
   ],
