@@ -90,7 +90,7 @@ import 'package:dartmark/src/package.dart';
     }).list(),
   }).list();
 
-class AcanthisBench extends Pacakge {
+class AcanthisBench extends Package {
   
   @override
   void parseFlatObject(Map<String, dynamic> json) {

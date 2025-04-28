@@ -5,7 +5,7 @@ import 'package:dartmark/src/objects.dart';
 import 'package:dartmark/src/package.dart';
 import 'package:vine/vine.dart';
 
-class VineBench extends Pacakge {
+class VineBench extends Package {
   final parseFlatObjectValidator = vine.compile(
     vine.object({
       'number': vine.number().positive(),
