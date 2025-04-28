@@ -60,46 +60,54 @@ final flatArraySchema = l.list(
   ],
 );
 
-final nestedArraySchema = l.schema({
-  'number': l.number(),
-  'negNumber': l.number(),
-  'infiniteNumber': l.number(),
-  'string': l.string(),
-  'longString': l.string(),
-  'boolean': l.boolean(),
-  'deeplyNested': l.list(
-    validators: [
-      l.schema({'foo': l.string(), 'num': l.number(), 'bool': l.boolean()}),
-    ],
-  ),
-});
+final nestedArraySchema = l.list(
+  validators: [
+    l.schema({
+      'number': l.number(),
+      'negNumber': l.number(),
+      'infiniteNumber': l.number(),
+      'string': l.string(),
+      'longString': l.string(),
+      'boolean': l.boolean(),
+      'deeplyNested': l.list(
+        validators: [
+          l.schema({'foo': l.string(), 'num': l.number(), 'bool': l.boolean()}),
+        ],
+      ),
+    })
+  ]
+);
 
-final deeplyNestedArraySchema = l.schema({
-  'number': l.number(),
-  'negNumber': l.number(),
-  'infiniteNumber': l.number(),
-  'string': l.string(),
-  'longString': l.string(),
-  'boolean': l.boolean(),
-  'deeplyNested': l.list(
-    validators: [
-      l.schema({
-        'foo': l.string(),
-        'num': l.number(),
-        'bool': l.boolean(),
-        'deeplyNested2': l.list(
-          validators: [
-            l.schema({
-              'foo2': l.string(),
-              'num2': l.number(),
-              'bool2': l.boolean(),
-            }),
-          ],
-        ),
-      }),
-    ],
-  ),
-});
+final deeplyNestedArraySchema = l.list(
+  validators: [
+    l.schema({
+      'number': l.number(),
+      'negNumber': l.number(),
+      'infiniteNumber': l.number(),
+      'string': l.string(),
+      'longString': l.string(),
+      'boolean': l.boolean(),
+      'deeplyNested': l.list(
+        validators: [
+          l.schema({
+            'foo': l.string(),
+            'num': l.number(),
+            'bool': l.boolean(),
+            'deeplyNested2': l.list(
+              validators: [
+                l.schema({
+                  'foo2': l.string(),
+                  'num2': l.number(),
+                  'bool2': l.boolean(),
+                }),
+              ],
+            ),
+          }),
+        ],
+      ),
+    })
+  ]
+);
 
 class LuthorBench extends Package {
   @override
