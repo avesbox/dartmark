@@ -109,7 +109,7 @@ final deeplyNestedArraySchema = l.list(
   ],
 );
 
-class LuthorBench extends Pacakge {
+class LuthorBench extends Package {
   @override
   void parseFlatObject(Map<String, dynamic> json) {
     flatObjectSchema.validateSchema(json);

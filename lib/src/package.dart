@@ -1,4 +1,4 @@
-abstract class Pacakge {
+abstract class Package {
 
   void parseFlatObject(Map<String, dynamic> json);
 
