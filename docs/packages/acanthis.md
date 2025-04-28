@@ -8,12 +8,16 @@ logo: https://raw.githubusercontent.com/avesbox/acanthis/main/assets/logo.png
 repository: https://github.com/avesbox/acanthis
 homepage: https://acanthis.avesbox.com/
 features:
-  - title: Built-in validators
+  - title: Built-in validators ✅
     value: 60+
-  - title: Async Validation
-    value: 'Acanthis supports async validation for all validators.'
-  - title: Metadata
-    value: 'Acanthis allows to add metadata to the schemas.'
-  - title: JSON Schema
-    value: 'Acanthis can generate JSON Schema from Acanthis Types.'
+  - title: JSON Schema 📑
+    value: 'Generate JSON Schema from all your validators with one simple method.'
+  - title: Async Validations ⏳
+    value: 'Validate your data against async validators to ensure validity even in the most complex scenarios.'
+  - title: Metadata 📝
+    value: 'Add all the information you need to your validators, including descriptions, examples, and more.'
+  - title: Recursive Objects ♻️
+    value: 'Validate recursive objects with ease, allowing you to create even more complex data structures.'
+  - title: Dependencies 🔬
+    value: 'Add dependencies between validators to ensure that your data is valid in all scenarios.'
 ---
