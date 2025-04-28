@@ -11,7 +11,7 @@ environment:
 dependencies:
   tyto: ^0.0.1-dev.6
   acanthis: ^1.2.1
-  luthor: ^0.6.0
+  luthor: ^0.6.1
   vine: ^1.4.0
   ack: ^0.1.2
   validart: ^0.1.2
