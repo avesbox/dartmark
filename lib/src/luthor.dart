@@ -74,8 +74,8 @@ final nestedArraySchema = l.list(
           l.schema({'foo': l.string(), 'num': l.number(), 'bool': l.boolean()}),
         ],
       ),
-    })
-  ]
+    }),
+  ],
 );
 
 final deeplyNestedArraySchema = l.list(
@@ -105,8 +105,8 @@ final deeplyNestedArraySchema = l.list(
           }),
         ],
       ),
-    })
-  ]
+    }),
+  ],
 );
 
 class LuthorBench extends Package {
