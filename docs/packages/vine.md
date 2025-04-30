@@ -17,5 +17,5 @@ features:
   - title: Composable
     value: Design independent, reusable diagrams so that you can assemble them to suit your needs.
   - title: Expandable
-    value: Vine offers over 150+ ready-to-use validation rules, but you can also create your own custom rules.
+    value: Vine offers over 70+ ready-to-use validation rules, but you can also create your own custom rules.
 ---
