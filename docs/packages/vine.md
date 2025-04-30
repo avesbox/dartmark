@@ -7,7 +7,7 @@ pubdev: https://pub.dev/packages/vine
 repository: https://github.com/LeadcodeDev/vine
 features:
   - title: Built-in validators
-    value: 150+
+    value: 70+
   - title: OpenAPI support
     value: Export and share your validation schema as OpenAPI spec.
   - title: Complexe Validation
