@@ -12,10 +12,11 @@ packages:
   acanthis:
     dependency: "direct main"
     description:
-      path: "../acanthis"
-      relative: true
-    source: path
-    version: "1.2.2"
+      name: acanthis
+      sha256: "711cc87d6f8b4d6724505e7e04016b7245a9d14e871e47a029778e0aceea9edf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.3"
   analyzer:
     dependency: transitive
     description:

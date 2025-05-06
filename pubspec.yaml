@@ -10,11 +10,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   tyto: ^0.0.1-dev.6
-<<<<<<< Updated upstream
-  acanthis: ^1.2.2
-=======
   acanthis: ^1.2.3
->>>>>>> Stashed changes
   luthor: ^0.6.1
   vine: ^1.5.1
   yaml: ^3.1.3
