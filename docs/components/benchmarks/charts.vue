@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { data as charts } from './charts.data'
+import { data as charts } from '../benchmarks/charts.data'
 import { ref } from 'vue'
 import { Mapper } from '../utils/mapper'
 
-const results = charts[0]?.['results'] ?? [];
 const sort = ref<string>('flat_object')
 const sortDirection = ref<number>(1)
 const data = ref<Record<string, any>[]>([])
 const baselines = ref<Record<string, any>>({})
 const type = ref<'score' | 'time'>('score')
+const resultsByPercentage = ref<Map<string, Record<string, any>>>()
 const baseline = ref<string | null>(null)
 const sortBy = (column: string, list: Record<string, any>[], changeSort: boolean = true) => {
   let direction = 1
@@ -31,55 +31,12 @@ const sortBy = (column: string, list: Record<string, any>[], changeSort: boolean
 }
 
 const getDatasets = (column: string) => {
-  const mapper = new Mapper(results)
+  const mapper = new Mapper()
   const datasets = mapper.getDatasetsBy(type.value)
   data.value = [...sortBy(column, datasets)]
-  console.log(data.value)
+  resultsByPercentage.value = mapper.getResultsPercentagesBy(type.value)
+  console.log('value', mapper.getResultsPercentagesBy(type.value).get('acanthis'), 'data')
 };
-const getDifferences = () => {
-  const mapper = new Mapper(results)
-  const datasets = mapper.getDatasetsBy(type.value)
-  const sorted = [...sortBy(sort.value, datasets, false)]
-  if (baseline.value && baseline.value !== 'null') {
-    console.log('baseline', baseline.value, typeof baseline.value)
-    /// Calculate difference from the baseline and convert them in percentage
-    const baselineData = sorted.find((item) => item.group === baseline.value)
-    if (baselineData) {
-      for (const item of sorted) {
-        const key = item.group
-        baselines.value[key] = {}
-        for(const [key2, value] of Object.entries(item)) {
-          if (key2 !== 'group') {
-            const baselineValue = baselineData[key2]
-            if (baselineValue !== 0) {
-              if (type.value === 'score') {
-                const res = ((baselineValue - value) / baselineValue) * 100;
-                baselines.value[key][key2] = res > 0 ? '+' + res.toFixed(2) + '%' : res.toFixed(2) + '%'
-              } else {
-                const res = ((value - baselineValue) / baselineValue) * 100;
-                baselines.value[key][key2] = res > 0 ? '+' + res.toFixed(2) + '%' : res.toFixed(2) + '%'
-              }
-            } else {
-              baselines.value[key][key2] = '0%'
-            }
-          }
-        }
-      }
-    } else {
-      baseline.value = null
-    }
-  } else {
-    for (const item of sorted) {
-      const key = item.group
-      baselines.value[key] = {}
-      for(const [key2, value] of Object.entries(item)) {
-        if (key2 !== 'group') {
-          baselines.value[key][key2] = null
-        }
-      }
-    }
-  }
-}
 getDatasets('flat_object')
 
 </script>
@@ -88,19 +45,9 @@ getDatasets('flat_object')
     <div class="results">
       <div class="header">
         <h1>Benchmark Results</h1>
-        <div class="row">
-          <div class="select-wrapper">
-            <select v-model="type" @change="getDatasets(sort)">
-              <option value="score">Score</option>
-              <option value="time">Time</option>
-            </select>
-            <span class="chevron">↓</span>
-          </div>
-          <p>{{ type === 'score' ? 'Higher is better' : 'Lower is better' }}</p>
-        </div>
       </div>
       <div class="benchmark-info">
-        <div class="column">
+        <div class="row-info">
           <div class="system-info">
             <p><b>System:</b> {{ charts[0]?.['system'] }}</p>
             <p><b>Dart Version:</b> {{ charts[0]?.['dart'] }}</p>
@@ -108,17 +55,17 @@ getDatasets('flat_object')
             <p><b>Memory:</b> {{ charts[0]?.['memory'] }}</p>
             <p><b>Last Execution Date:</b> {{ new Date(Date.parse(charts[0]?.['date'])).toLocaleString() }}</p>
           </div>
-          <div class="select-wrapper">
-            <select v-model="baseline" @change="getDifferences()">
-              <option value="null">Select Baseline</option>
-              <option v-for="(item, index) in data" :key="index" :value="item['group']">{{ item['group'] }}</option>
-            </select>
-            <span class="chevron">↓</span>
-          </div>
-        </div>
-        <div class="column">
           <div class="about-info">
             <p>Results can be influenced by many factors outside the code itself, such as hardware differences, background processes, compiler optimizations, and even the specific data used. Benchmarks often measure only a narrow aspect of performance and may not reflect real-world usage or workloads. Therefore, while benchmarks can provide useful insights, they should not be the sole basis for choosing a tool or approach—context and broader testing are essential.</p>
+          </div>
+        </div>
+        <div class="row-info">
+          <div class="select-wrapper">
+            <select v-model="type" @change="getDatasets(sort)">
+              <option value="score">Score (Higher is better)</option>
+              <option value="time">Time (Lower is better)</option>
+            </select>
+            <span class="chevron">↓</span>
           </div>
           <div class="results-info">
             <p>The results show the Average ops/sec for each case and the Average time/iter for each case</p>
@@ -126,15 +73,16 @@ getDatasets('flat_object')
         </div>
       </div>
       <table class="results-table">
+        <colgroup>
+          <col style="width:20%">
+          <col style="width:40%">
+          <col style="width:40%">
+        </colgroup>
         <thead>
           <tr>
             <th>Package</th>
             <th @click="getDatasets('flat_object')" :class="sort === 'flat_object' && ['active', sortDirection === 1 ? 'desc' : 'asc']">Flat Object</th>
-            <th @click="getDatasets('nested_object')" :class="sort === 'nested_object' && ['active', sortDirection === 1 ? 'desc' : 'asc']">Nested Object</th>
-            <th @click="getDatasets('deeply_nested_object')" :class="sort === 'deeply_nested_object' && ['active', sortDirection === 1 ? 'desc' : 'asc']">Deeply Nested Object</th>
             <th @click="getDatasets('flat_array')" :class="sort === 'flat_array' && ['active', sortDirection === 1 ? 'desc' : 'asc']">Flat Array</th>
-            <th @click="getDatasets('nested_array')" :class="sort === 'nested_array' && ['active', sortDirection === 1 ? 'desc' : 'asc']">Nested Array</th>
-            <th @click="getDatasets('deeply_nested_array')" :class="sort === 'deeply_nested_array' && ['active', sortDirection === 1 ? 'desc' : 'asc']">Deeply Nested Array</th>
           </tr>
         </thead>
         <tbody>
@@ -142,27 +90,15 @@ getDatasets('flat_object')
             <td style="text-transform: uppercase; letter-spacing: 1px;"><a :href="'packages/' + item.group" :data-version="item.version">{{ item.group }}</a></td>
             <td>
               <p :class="type === 'score' ? 'score' : 'time'">{{ item.flat_object }}</p>
-              <span class="difference">{{ baselines[item.group]?.flat_object }}</span>
-            </td>
-            <td>
-              <p :class="type === 'score' ? 'score' : 'time'">{{ item.nested_object }}</p>
-              <span class="difference">{{ baselines[item.group]?.nested_object }}</span>
-            </td>
-            <td >
-              <p :class="type === 'score' ? 'score' : 'time'">{{ item.deeply_nested_object }}</p>
-              <span class="difference">{{ baselines[item.group]?.deeply_nested_object }}</span>
+              <div class="bar">
+                <div class="bar-background" :style="{ width: resultsByPercentage?.get(item.group)?.flat_object + '%' }"></div>
+              </div>
             </td>
             <td>
               <p :class="type === 'score' ? 'score' : 'time'">{{ item.flat_array }}</p>
-              <span class="difference">{{ baselines[item.group]?.flat_array }}</span>
-            </td>
-            <td>
-              <p :class="type === 'score' ? 'score' : 'time'">{{ item.nested_array }}</p>
-              <span class="difference">{{ baselines[item.group]?.nested_array }}</span>
-            </td>
-            <td>
-              <p :class="type === 'score' ? 'score' : 'time'">{{ item.deeply_nested_array }}</p>
-              <span class="difference">{{ baselines[item.group]?.deeply_nested_array }}</span>
+              <div class="bar">
+                <div class="bar-background" :style="{ width: resultsByPercentage?.get(item.group)?.flat_array + '%' }"></div>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -272,37 +208,48 @@ h1 {
 }
 .benchmark-info {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
   width: 100%;
   gap: 16px;
 }
-.column {
+.row-info {
   flex: 1 1 0;
   min-width: 0;
   box-sizing: border-box;
-}
-.column {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+.row-info {
+
+}
 .select-wrapper {
   position: relative;
   display: flex;
+  flex: 1;
   align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--vp-c-text-1);
+  font-weight: 400;
+  border: 1px solid var(--vp-c-divider);
+  padding: 8px 16px;
+  border-radius: 4px;
+  flex: 1;
 }
 .select-wrapper select {
   font-family: monospace;
-  padding: 8px 32px 8px 12px;
   font-size: 1rem;
   appearance: none;
   -webkit-appearance: none;
   width: 100%;
   -moz-appearance: none;
   background: none;
-  border: 1px solid var(--vp-c-divider);
   border-radius: 4px;
   outline: none;
   color: var(--vp-c-text-1);
@@ -328,7 +275,7 @@ h1 {
   border: 1px solid var(--vp-c-divider);
   padding: 8px 16px;
   border-radius: 4px;
-  flex-grow: 1;
+  flex: 1
 }
 .about-info {
   display: flex;
@@ -342,7 +289,7 @@ h1 {
   border-radius: 4px;
   text-wrap: balance;
   line-height: 1.7rem;
-  flex-grow: 1;
+  flex: 1;
   height: 100%;
 }
 .results-info {
@@ -359,10 +306,10 @@ h1 {
   border-radius: 4px;
   text-wrap: balance;
   line-height: 1rem;
-  flex-grow: 1;
+  flex: 1;
   height: 100%;
 }
-.row {
+.row, .row-info {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -373,5 +320,14 @@ h1 {
   font-size: 12px;
   color: var(--vp-c-text-1);
   font-weight: 400;
+}
+.bar {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+}
+.bar-background {
+  background-color: var(--vp-c-brand-1);
+  height: 8px;
+  border-radius: 999px;
 }
 </style>

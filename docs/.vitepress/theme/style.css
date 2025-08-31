@@ -7,3 +7,14 @@
 .VPNavBar:not(.has-sidebar).top {
 	background-color: transparent !important;
 }
+:root {
+--vp-c-brand-1: #f43f5e;
+  --vp-c-brand-2: #fb7185;
+  --vp-c-brand-light: #e11d48;
+  --vp-c-brand-lighter: #fb7185;
+  --vp-c-brand-lightest: #fecdd3;
+  --vp-c-brand-dark: #be123c;
+  --vp-c-brand-darker: #881337;
+  --vp-c-brand-dimm: rgba(255, 87, 34, .08);
+  --vp-home-hero-name-background: var(--vp-c-brand-1) !important;
+}

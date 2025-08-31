@@ -24,8 +24,13 @@ console.log(page.value.frontmatter, route.data)
 <template>
   <div class="package">
     <div class="package__header">
-      <h1 class="title">{{ page.frontmatter.title }} <span class="version">{{ data?.[0]?.version }}</span></h1>
-      <p class="description">{{ page.frontmatter.description }}</p>
+      <div class="package__basic__info">
+        <img v-if="page.frontmatter.logo" :src="page.frontmatter.logo" alt="Package Logo" width="64" height="64" />
+        <div class="package__title">
+          <h1 class="title">{{ page.frontmatter.title }} <span class="version">{{ data?.[0]?.version }}</span></h1>
+          <p class="description">{{ page.frontmatter.description }}</p>
+        </div>
+      </div>
       <div class="row">
         <div class="column">
           <h2>Publisher</h2>
@@ -79,7 +84,7 @@ console.log(page.value.frontmatter, route.data)
         </tr>
       </tbody>
     </table> 
-    <div class="features">
+    <div v-if="frontmatter.features" class="features">
       <h2 class="title">Features</h2>
       <div v-for="(item, index) in frontmatter.features" :key="index" class="column">
         <h2>{{ item.title }}</h2>
@@ -106,6 +111,15 @@ console.log(page.value.frontmatter, route.data)
   flex-direction: column;
   width: 100%;
   height: 100%;
+  gap: 16px;
+}
+.package__basic__info {
+  display: flex;
+  gap: 16px;
+}
+.package__title {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
 }
 .title {
