@@ -25,7 +25,7 @@ console.log(page.value.frontmatter, route.data)
   <div class="package">
     <div class="package__header">
       <div class="package__basic__info">
-        <img v-if="page.frontmatter.logo" :src="page.frontmatter.logo" alt="Package Logo" width="64" height="64" />
+        <img v-if="page.frontmatter.logo" :src="page.frontmatter.logo" alt="Package Logo" style="height: 64px"/>
         <div class="package__title">
           <h1 class="title">{{ page.frontmatter.title }} <span class="version">{{ data?.[0]?.version }}</span></h1>
           <p class="description">{{ page.frontmatter.description }}</p>
@@ -34,14 +34,14 @@ console.log(page.value.frontmatter, route.data)
       <div class="row">
         <div class="column">
           <h2>Publisher</h2>
-          <p>{{ page.frontmatter.publisher }}</p>
+          <a target="_blank" :href="page.frontmatter.publisher_website">{{ page.frontmatter.publisher }}</a>
         </div>
         <div class="column">
           <h2>Links</h2>
           <div class="links">
-            <a v-if="page.frontmatter.pubdev" :href="page.frontmatter.pubdev">Pub.dev</a>
-            <a v-if="page.frontmatter.repository" :href="page.frontmatter.repository">Repository</a>
-            <a v-if="page.frontmatter.homepage" :href="page.frontmatter.homepage">Homepage</a>
+            <a v-if="page.frontmatter.pubdev" :href="page.frontmatter.pubdev" target="_blank">Pub.dev</a>
+            <a v-if="page.frontmatter.repository" :href="page.frontmatter.repository" target="_blank">Repository</a>
+            <a v-if="page.frontmatter.homepage" :href="page.frontmatter.homepage" target="_blank">Homepage</a>
           </div>
         </div>
       </div>

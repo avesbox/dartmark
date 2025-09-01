@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "chart.js": "^4.4.8",
-    "vitepress": "^1.6.3",
+    "vitepress": "^1.6.4",
     "vue-chartjs": "^5.3.2"
   },
   "devDependencies": {
