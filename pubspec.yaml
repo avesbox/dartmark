@@ -10,7 +10,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   tyto: ^0.0.1-dev.6
-  acanthis: ^1.4.2
+  acanthis: ^1.4.3
   luthor: ^0.13.1
   ack: ^0.1.2
   yaml: ^3.1.3
