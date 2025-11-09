@@ -13,10 +13,10 @@ packages:
     dependency: "direct main"
     description:
       name: acanthis
-      sha256: efcdf47ed858ed4629172fb86e946315b0be0271dda03a278724d2cd380e992c
+      sha256: "4805aa5cbac8853a98d0106ae69d4eb7f332e106fa4d311bdbc42dbe399471dd"
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.5"
+    version: "1.4.6"
   ack:
     dependency: "direct main"
     description:
@@ -189,10 +189,10 @@ packages:
     dependency: "direct main"
     description:
       name: luthor
-      sha256: aeb27426c99330b8aa4ece853835bc656ca41dd16f25802aa6ab74faba497a29
+      sha256: "15f6136357eee18bce0a94f0751df9df2fb2263b9f6154b51af04f5950676fc7"
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.1"
+    version: "0.14.0"
   matcher:
     dependency: transitive
     description:
@@ -473,5 +473,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.3"
+  zard:
+    dependency: "direct main"
+    description:
+      name: zard
+      sha256: "772fc9ef6088123fefaaa88cb986253f0e838aec2af2c3b956a9a1c98ea2b049"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.23"
 sdks:
-  dart: ">=3.8.0 <4.0.0"
+  dart: ">=3.9.0 <4.0.0"

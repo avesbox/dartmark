@@ -1,17 +1,17 @@
 name: dartmark
 description: A sample command-line application.
 version: 1.0.0
-publish_to: none # Remove this line if you wish to publish to pub.dev
-# repository: https://github.com/my_org/my_repo
+publish_to: none 
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.9.0
 
 # Add regular dependencies here.
 dependencies:
+  zard: ^0.0.23
   tyto: ^0.0.1-dev.6
-  acanthis: ^1.4.5
-  luthor: ^0.13.1
+  acanthis: ^1.4.6
+  luthor: ^0.14.0
   ack: ^0.1.2
   yaml: ^3.1.3
   vine: ^1.7.2
