@@ -2,6 +2,7 @@
 import { data as charts } from '../../components/benchmarks/charts.data'
 import { onMounted, ref } from 'vue'
 import { Mapper } from '../../components/utils/mapper'
+import WarningButton from '../../components/warning-button.vue'
 import { useData, useRoute, useRouter } from 'vitepress'
 
 const { page, frontmatter } = useData()
@@ -50,12 +51,30 @@ console.log(page.value.frontmatter, route.data)
       <thead>
         <tr>
           <th>Type</th>
-          <th>Flat Object</th>
-          <th>Nested Object</th>
-          <th>Deeply Nested Object</th>
-          <th>Flat Array</th>
-          <th>Nested Array</th>
-          <th>Deeply Nested Array</th>
+          <th>
+            Flat Object
+            <WarningButton v-if="data[0]?.warningMessages?.flat_object" :message="data[0]?.warningMessages?.flat_object"></WarningButton>
+          </th>
+          <th>
+            Nested Object
+            <WarningButton v-if="data[0]?.warningMessages?.nested_object" :message="data[0]?.warningMessages?.nested_object"></WarningButton>
+          </th>
+          <th>
+            Deeply Nested Object
+            <WarningButton v-if="data[0]?.warningMessages?.deeply_nested_object" :message="data[0]?.warningMessages?.deeply_nested_object"></WarningButton>
+          </th>
+          <th>
+            Flat Array
+            <WarningButton v-if="data[0]?.warningMessages?.flat_array" :message="data[0]?.warningMessages?.flat_array"></WarningButton>
+          </th>
+          <th>
+            Nested Array
+            <WarningButton v-if="data[0]?.warningMessages?.nested_array" :message="data[0]?.warningMessages?.nested_array"></WarningButton>
+          </th>
+          <th>
+            Deeply Nested Array
+            <WarningButton v-if="data[0]?.warningMessages?.deeply_nested_array" :message="data[0]?.warningMessages?.deeply_nested_array"></WarningButton>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -187,7 +206,6 @@ console.log(page.value.frontmatter, route.data)
   width: 100%;
   border-collapse: collapse;
   border-radius: 8px;
-  overflow: hidden;
   border: 1px solid var(--vp-c-divider);
 }
 .results-table th {

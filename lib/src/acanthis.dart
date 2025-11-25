@@ -6,89 +6,89 @@ import 'package:dartmark/src/objects.dart';
 import 'package:dartmark/src/package.dart';
 
 
-  final flatObjectSchema = object({
-    'number': number(),
-    'negNumber': number(),
-    'infiniteNumber': number(),
-    'string': string(),
-    'longString': string(),
-    'boolean': boolean(),
-  });
+final flatObjectSchema = object({
+  'number': number(),
+  'negNumber': number().negative(),
+  'infiniteNumber': number(),
+  'string': string(),
+  'longString': string(),
+  'boolean': boolean(),
+});
 
-  final nestedObjectSchema = object({
-    'number': number(),
-    'negNumber': number(),
-    'infiniteNumber': number(),
-    'string': string(),
-    'longString': string(),
-    'boolean': boolean(),
-    'deeplyNested': object({
-      'foo': string(),
-      'num': number(),
-      'bool': boolean(),
+final nestedObjectSchema = object({
+  'number': number(),
+  'negNumber': number(),
+  'infiniteNumber': number(),
+  'string': string(),
+  'longString': string(),
+  'boolean': boolean(),
+  'deeplyNested': object({
+    'foo': string(),
+    'num': number(),
+    'bool': boolean(),
+  }),
+});
+
+final deeplyNestedObjectSchema = object({
+  'number': number(),
+  'negNumber': number(),
+  'infiniteNumber': number(),
+  'string': string(),
+  'longString': string(),
+  'boolean': boolean(),
+  'deeplyNested': object({
+    'foo': string(),
+    'num': number(),
+    'bool': boolean(),
+    'deeplyNested2': object({
+      'foo2': string(),
+      'num2': number(),
+      'bool2': boolean(),
     }),
-  });
+  }),
+});
 
-  final deeplyNestedObjectSchema = object({
-    'number': number(),
-    'negNumber': number(),
-    'infiniteNumber': number(),
-    'string': string(),
-    'longString': string(),
-    'boolean': boolean(),
-    'deeplyNested': object({
-      'foo': string(),
-      'num': number(),
-      'bool': boolean(),
-      'deeplyNested2': object({
-        'foo2': string(),
-        'num2': number(),
-        'bool2': boolean(),
-      }),
-    }),
-  });
+final flatArraySchema = object({
+  'number': number(),
+  'negNumber': number(),
+  'infiniteNumber': number(),
+  'string': string(),
+  'longString': string(),
+  'boolean': boolean(),
+}).list();
 
-  final flatArraySchema = object({
-    'number': number(),
-    'negNumber': number(),
-    'infiniteNumber': number(),
-    'string': string(),
-    'longString': string(),
-    'boolean': boolean(),
-  }).list();
+final nestedArraySchema = object({
+  'number': number(),
+  'negNumber': number(),
+  'infiniteNumber': number(),
+  'string': string(),
+  'longString': string(),
+  'boolean': boolean(),
+  'deeplyNested': object({
+    'foo': string(),
+    'num': number(),
+    'bool': boolean(),
+  }).list(),
+}).list();
 
-  final nestedArraySchema = object({
-    'number': number(),
-    'negNumber': number(),
-    'infiniteNumber': number(),
-    'string': string(),
-    'longString': string(),
-    'boolean': boolean(),
-    'deeplyNested': object({
-      'foo': string(),
-      'num': number(),
-      'bool': boolean(),
+final deeplyNestedArraySchema = object({
+  'number': number(),
+  'negNumber': number(),
+  'infiniteNumber': number(),
+  'string': string(),
+  'longString': string(),
+  'boolean': boolean(),
+  'deeplyNested': object({
+    'foo': string(),
+    'num': number(),
+    'bool': boolean(),
+    'deeplyNested2': object({
+      'foo2': string(),
+      'num2': number(),
+      'bool2': boolean(),
     }).list(),
-  }).list();
-
-  final deeplyNestedArraySchema = object({
-    'number': number(),
-    'negNumber': number(),
-    'infiniteNumber': number(),
-    'string': string(),
-    'longString': string(),
-    'boolean': boolean(),
-    'deeplyNested': object({
-      'foo': string(),
-      'num': number(),
-      'bool': boolean(),
-      'deeplyNested2': object({
-        'foo2': string(),
-        'num2': number(),
-        'bool2': boolean(),
-      }).list(),
-    }).list(),
-  }).list();
+  }).list(),
+}).list();
 
 class AcanthisBench extends Package {
   

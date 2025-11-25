@@ -9,9 +9,10 @@ environment:
 # Add regular dependencies here.
 dependencies:
   zard: ^0.0.23
-  tyto: ^0.0.1-dev.6
+  tyto: ^0.0.3
   acanthis: ^1.5.0
   luthor: ^0.15.0
+  ez_validator: ^0.3.6
   ack: ^0.1.2
   yaml: ^3.1.3
   vine: ^1.7.2

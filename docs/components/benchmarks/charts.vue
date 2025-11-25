@@ -2,6 +2,7 @@
 import { data as charts } from '../benchmarks/charts.data'
 import { ref } from 'vue'
 import { Mapper } from '../utils/mapper'
+import WarningButton from '../warning-button.vue'
 
 const sort = ref<string>('flat_object')
 const sortDirection = ref<number>(1)
@@ -95,10 +96,14 @@ getDatasets('flat_object')
               </div>
             </td>
             <td>
-              <p :class="type === 'score' ? 'score' : 'time'">{{ item.flat_array }}</p>
+              <div style="display: flex; justify-content: space-between;">
+                <p :class="type === 'score' ? 'score' : 'time'">{{ item.flat_array }}</p>
+                <WarningButton v-if="item.warningMessages?.flat_array" :message="item.warningMessages?.flat_array" />
+              </div>
               <div class="bar">
                 <div class="bar-background" :style="{ width: resultsByPercentage?.get(item.group)?.flat_array + '%' }"></div>
               </div>
+              
             </td>
           </tr>
         </tbody>
@@ -131,7 +136,6 @@ getDatasets('flat_object')
   width: 100%;
   border-collapse: collapse;
   border-radius: 8px;
-  overflow: hidden;
   border: 1px solid var(--vp-c-divider);
 }
 .results-table th {

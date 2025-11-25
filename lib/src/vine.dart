@@ -5,35 +5,56 @@ import 'package:dartmark/src/objects.dart';
 import 'package:dartmark/src/package.dart';
 import 'package:vine/vine.dart';
 
-class VineBench extends Package {
-  final parseFlatObjectValidator = vine.compile(
-    vine.object({
-      'number': vine.number().positive(),
-      'negNumber': vine.number().negative(),
-      'infiniteNumber': vine.number(),
-      'string': vine.string(),
-      'longString': vine.string(),
-      'boolean': vine.boolean(),
-    }),
-  );
+final parseFlatObjectValidator = vine.compile(
+  vine.object({
+    'number': vine.number().positive(),
+    'negNumber': vine.number().negative(),
+    'infiniteNumber': vine.number(),
+    'string': vine.string(),
+    'longString': vine.string(),
+    'boolean': vine.boolean(),
+  }),
+);
 
-  final parseNestedObjectValidator = vine.compile(
-    vine.object({
-      'number': vine.number().positive(),
-      'negNumber': vine.number().negative(),
-      'infiniteNumber': vine.number(),
-      'string': vine.string(),
-      'longString': vine.string(),
-      'boolean': vine.boolean(),
-      'deeplyNested': vine.object({
-        'foo': vine.string(),
-        'num': vine.number(),
-        'bool': vine.boolean(),
+final parseNestedObjectValidator = vine.compile(
+  vine.object({
+    'number': vine.number().positive(),
+    'negNumber': vine.number().negative(),
+    'infiniteNumber': vine.number(),
+    'string': vine.string(),
+    'longString': vine.string(),
+    'boolean': vine.boolean(),
+    'deeplyNested': vine.object({
+      'foo': vine.string(),
+      'num': vine.number(),
+      'bool': vine.boolean(),
+    }),
+  }),
+);
+
+final parseDeeplyNestedObjectValidator = vine.compile(
+  vine.object({
+    'number': vine.number().positive(),
+    'negNumber': vine.number().negative(),
+    'infiniteNumber': vine.number(),
+    'string': vine.string(),
+    'longString': vine.string(),
+    'boolean': vine.boolean(),
+    'deeplyNested': vine.object({
+      'foo': vine.string(),
+      'num': vine.number(),
+      'bool': vine.boolean(),
+      'deeplyNested2': vine.object({
+        'foo2': vine.string(),
+        'num2': vine.number(),
+        'bool2': vine.boolean(),
       }),
     }),
-  );
+  }),
+);
 
-  final parseDeeplyNestedObjectValidator = vine.compile(
+final parseFlatArrayValidator = vine.compile(
+  vine.array(
     vine.object({
       'number': vine.number().positive(),
       'negNumber': vine.number().negative(),
@@ -41,71 +62,58 @@ class VineBench extends Package {
       'string': vine.string(),
       'longString': vine.string(),
       'boolean': vine.boolean(),
-      'deeplyNested': vine.object({
-        'foo': vine.string(),
-        'num': vine.number(),
-        'bool': vine.boolean(),
-        'deeplyNested2': vine.object({
-          'foo2': vine.string(),
-          'num2': vine.number(),
-          'bool2': vine.boolean(),
+    }),
+  ),
+);
+
+final parseNestedArrayValidator = vine.compile(
+  vine.array(
+    vine.object({
+      'number': vine.number().positive(),
+      'negNumber': vine.number().negative(),
+      'infiniteNumber': vine.number(),
+      'string': vine.string(),
+      'longString': vine.string(),
+      'boolean': vine.boolean(),
+      'deeplyNested': vine.array(
+        vine.object({
+          'foo': vine.string(),
+          'num': vine.number(),
+          'bool': vine.boolean(),
         }),
-      }),
+      ),
     }),
-  );
+  ),
+);
 
-  final parseFlatArrayValidator = vine.compile(
-    vine.array(
-      vine.object({
-        'number': vine.number().positive(),
-        'negNumber': vine.number().negative(),
-        'infiniteNumber': vine.number(),
-        'string': vine.string(),
-        'longString': vine.string(),
-        'boolean': vine.boolean(),
-      }),
-    ),
-  );
+final parseDeeplyNestedArrayValidator = vine.compile(
+  vine.array(
+    vine.object({
+      'number': vine.number().positive(),
+      'negNumber': vine.number().negative(),
+      'infiniteNumber': vine.number(),
+      'string': vine.string(),
+      'longString': vine.string(),
+      'boolean': vine.boolean(),
+      'deeplyNested': vine.array(
+        vine.object({
+          'foo': vine.string(),
+          'num': vine.number(),
+          'bool': vine.boolean(),
+          'deeplyNested2': vine.array(
+            vine.object({
+              'foo2': vine.string(),
+              'num2': vine.number(),
+              'bool2': vine.boolean(),
+            }),
+          ),
+        }),
+      ),
+    }),
+  ),
+);
 
-  final parseNestedArrayValidator = vine.compile(
-    vine.array(
-      vine.object({
-        'number': vine.number().positive(),
-        'negNumber': vine.number().negative(),
-        'infiniteNumber': vine.number(),
-        'string': vine.string(),
-        'longString': vine.string(),
-        'boolean': vine.boolean(),
-        'deeplyNested': vine.array(
-          vine.object({'foo': vine.string(), 'num': vine.number(), 'bool': vine.boolean()}),
-        ),
-      }),
-    ),
-  );
-
-  final parseDeeplyNestedArrayValidator = vine.compile(
-    vine.array(
-      vine.object({
-        'number': vine.number().positive(),
-        'negNumber': vine.number().negative(),
-        'infiniteNumber': vine.number(),
-        'string': vine.string(),
-        'longString': vine.string(),
-        'boolean': vine.boolean(),
-        'deeplyNested': vine.array(
-          vine.object({
-            'foo': vine.string(),
-            'num': vine.number(),
-            'bool': vine.boolean(),
-            'deeplyNested2': vine.array(
-              vine.object({'foo2': vine.string(), 'num2': vine.number(), 'bool2': vine.boolean()}),
-            ),
-          }),
-        ),
-      }),
-    ),
-  );
-
+class VineBench extends Package {
   @override
   void parseFlatObject(Map<String, dynamic> json) {
     parseFlatObjectValidator.validate(json);
@@ -161,7 +169,11 @@ class VineBench extends Package {
       ),
     );
     suite.add(
-      OpsBenchmarkBase('flat_array', group: 'vine', onRun: () async => parseFlatArray(flatArray)),
+      OpsBenchmarkBase(
+        'flat_array',
+        group: 'vine',
+        onRun: () async => parseFlatArray(flatArray),
+      ),
     );
     suite.add(
       OpsBenchmarkBase(

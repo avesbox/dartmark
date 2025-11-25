@@ -5,17 +5,57 @@ import 'package:tyto/tyto.dart';
 import 'package:dartmark/src/objects.dart';
 import 'package:dartmark/src/package.dart';
 
+final flatObjectSchema = z.map({
+  'number': z.int(),
+  'negNumber': z.int(),
+  'infiniteNumber': z.double(),
+  'string': z.string(),
+  'longString': z.string(),
+  'boolean': z.bool(),
+});
 
-  final flatObjectSchema = z.map({
+final nestedObjectSchema = z.map({
+  'number': z.int(),
+  'negNumber': z.int(),
+  'infiniteNumber': z.double(),
+  'string': z.string(),
+  'longString': z.string(),
+  'boolean': z.bool(),
+  'deeplyNested': z.map({'foo': z.string(), 'num': z.int(), 'bool': z.bool()}),
+});
+
+final deeplyNestedObjectSchema = z.map({
+  'number': z.int(),
+  'negNumber': z.int(),
+  'infiniteNumber': z.double(),
+  'string': z.string(),
+  'longString': z.string(),
+  'boolean': z.bool(),
+  'deeplyNested': z.map({
+    'foo': z.string(),
+    'num': z.int(),
+    'bool': z.bool(),
+    'deeplyNested2': z.map({
+      'foo2': z.string(),
+      'num2': z.int(),
+      'bool2': z.bool(),
+    }),
+  }),
+});
+
+final flatArraySchema = z.list(
+  z.map({
     'number': z.int(),
     'negNumber': z.int(),
     'infiniteNumber': z.double(),
     'string': z.string(),
     'longString': z.string(),
     'boolean': z.bool(),
-  });
+  }),
+);
 
-  final nestedObjectSchema = z.map({
+final nestedArraySchema = z.list(
+  z.map({
     'number': z.int(),
     'negNumber': z.int(),
     'infiniteNumber': z.double(),
@@ -27,9 +67,11 @@ import 'package:dartmark/src/package.dart';
       'num': z.int(),
       'bool': z.bool(),
     }),
-  });
+  }),
+);
 
-  final deeplyNestedObjectSchema = z.map({
+final deeplyNestedArraySchema = z.list(
+  z.map({
     'number': z.int(),
     'negNumber': z.int(),
     'infiniteNumber': z.double(),
@@ -46,52 +88,10 @@ import 'package:dartmark/src/package.dart';
         'bool2': z.bool(),
       }),
     }),
-  });
-
-  final flatArraySchema = z.list(z.map({
-    'number': z.int(),
-    'negNumber': z.int(),
-    'infiniteNumber': z.double(),
-    'string': z.string(),
-    'longString': z.string(),
-    'boolean': z.bool(),
-  }));
-
-  final nestedArraySchema = z.list(z.map({
-    'number': z.int(),
-    'negNumber': z.int(),
-    'infiniteNumber': z.double(),
-    'string': z.string(),
-    'longString': z.string(),
-    'boolean': z.bool(),
-    'deeplyNested': z.map({
-      'foo': z.string(),
-      'num': z.int(),
-      'bool': z.bool(),
-    }),
-  }));
-
-  final deeplyNestedArraySchema = z.list(z.map({
-    'number': z.int(),
-    'negNumber': z.int(),
-    'infiniteNumber': z.double(),
-    'string': z.string(),
-    'longString': z.string(),
-    'boolean': z.bool(),
-    'deeplyNested': z.map({
-      'foo': z.string(),
-      'num': z.int(),
-      'bool': z.bool(),
-      'deeplyNested2': z.map({
-        'foo2': z.string(),
-        'num2': z.int(),
-        'bool2': z.bool(),
-      }),
-    }),
-  }));
+  }),
+);
 
 class ZardBench extends Package {
-  
   @override
   void parseFlatObject(Map<String, dynamic> json) {
     flatObjectSchema.parse(json);
@@ -168,11 +168,10 @@ class ZardBench extends Package {
       ),
     );
     final results = await suite.run();
-    for(final result in results) {
+    for (final result in results) {
       print(jsonEncode(result.toMap()));
     }
   }
- 
 }
 
 void main() {

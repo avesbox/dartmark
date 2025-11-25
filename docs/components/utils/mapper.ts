@@ -30,10 +30,14 @@ export class Mapper {
 				deeply_nested_object: 0,
 				deeply_nested_array: 0,
 				version: '',
+				warningMessages: {}
 			}
 			for (const bench of groupBenchs) {
 				groupResults[bench.name] = type === 'score' ? bench.avgScore : Number(bench.avgTime.toFixed(2))
 				groupResults['version'] = bench.version
+				if (bench.warningMessage) {
+					(groupResults as any).warningMessages[bench.name] = bench.warningMessage
+				}
 			}
 			resultsByBenchmark.set(group, groupResults)
 		}
@@ -78,6 +82,7 @@ export class Mapper {
 				deeply_nested_object: 0,
 				deeply_nested_array: 0,
 				version: source.version as unknown as number, // temp assign, fix below
+
 			}
 			for (const key of benchmarkKeys) {
 				const max = maxima[key] || 0
@@ -130,7 +135,8 @@ export class Mapper {
 			if (groupResults) {
 				const dataset: Record<string, any> = {
 					group,
-					...groupResults
+					...groupResults,
+
 				}
 				console.log('data', dataset)
 				datasets.push(dataset)
