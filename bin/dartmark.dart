@@ -2,14 +2,16 @@ import 'dart:io';
 
 import 'package:dartmark/src/executor.dart';
 
-void main(List<String> arguments) {
+Future<void> main(List<String> arguments) async {
   final httpConfigs = _discoverHttpConfigs();
   final validationConfigs = _discoverValidationConfigs();
   final Executor executor = Executor(
-    // validationConfigs: validationConfigs,
+    validationConfigs: validationConfigs,
     httpConfigs: httpConfigs,
   );
-  executor.execute();
+  await executor.execute();
+  
+  exit(0);
 }
 
 List<String> _discoverHttpConfigs() {

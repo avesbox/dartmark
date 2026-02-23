@@ -119,18 +119,23 @@ class HttpRunner {
     final timeout = Duration(seconds: config.http.waitForReady.timeoutSeconds);
     final interval = Duration(milliseconds: config.http.waitForReady.intervalMillis);
     final started = DateTime.now();
-    while (DateTime.now().difference(started) < timeout) {
-      try {
-        final request = await HttpClient().getUrl(uri);
-        final response = await request.close();
-        if (response.statusCode >= 200 && response.statusCode < 500) {
-          return;
+    final client = HttpClient();
+    try {
+      while (DateTime.now().difference(started) < timeout) {
+        try {
+          final request = await client.getUrl(uri);
+          final response = await request.close();
+          if (response.statusCode >= 200 && response.statusCode < 500) {
+            return;
+          }
+        } catch (_) {
         }
-      } catch (_) {
+        await Future.delayed(interval);
       }
-      await Future.delayed(interval);
+      throw StateError('Server did not become ready within ${timeout.inSeconds} seconds.');
+    } finally {
+      client.close();
     }
-    throw StateError('Server at ${uri.toString()} not ready within ${timeout.inSeconds}s');
   }
 
   Future<void> _warmup(HttpBenchmarkConfig config) async {
