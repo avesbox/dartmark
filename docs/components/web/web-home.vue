@@ -75,8 +75,6 @@ onMounted(() => {
 				<template #cell-name="{ record, value }">
 					<a
 						:href="record.nameUrl"
-						target="_blank"
-						rel="noopener noreferrer"
 						class="text-primary hover:underline"
 					>
 						{{ value }}
