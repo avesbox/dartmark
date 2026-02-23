@@ -36,12 +36,10 @@ class Executor {
     final dependencies = File('pubspec.yaml').readAsStringSync();
     YamlMap yaml = loadYaml(dependencies);
     final pubspec = yaml.nodes['dependencies']?.value;
-    final stopwatch = Stopwatch()..start();
     for (var path in validationConfigs) {
       final configFile = File(path);
       if (!configFile.existsSync()) {
         print('Validation config not found at $path, skipping');
-        stopwatch.reset();
         continue;
       }
       final config = ValidationConfig.fromYaml(configFile);
@@ -53,17 +51,15 @@ class Executor {
       );
       if (compile.exitCode != 0) {
         print('Error compiling ${config.name}: ${compile.stderr}');
-        stopwatch.reset();
         continue;
       }
       final benchProcess = await Process.run('bin/${config.name}.exe', []);
       if (benchProcess.exitCode != 0) {
         print('Error running benchmarks for ${config.name}: ${benchProcess.stderr}');
-        stopwatch.reset();
         continue;
       }
       File('bin/${config.name}.exe').deleteSync();
-      print('Benchmarks for ${config.name} completed successfully. [${stopwatch.elapsed.inMilliseconds}ms]');
+      print('Benchmarks for ${config.name} completed successfully.');
       final data = benchProcess.stdout;
       final lines = data.split('\n');
       for (var line in lines) {
@@ -144,12 +140,10 @@ class Executor {
     }
     file.createSync(recursive: true);
     final libriaries = <Map<String, Object?>>[];
-    final stopwatch = Stopwatch()..start();
     for (final path in httpConfigs) {
       final configFile = File(path);
       if (!configFile.existsSync()) {
         print('HTTP config not found at $path, skipping');
-        stopwatch.reset();
         continue;
       }
       final config = HttpBenchmarkConfig.fromYaml(configFile);
@@ -170,11 +164,9 @@ class Executor {
       try {
         final result = await runner.run(config);
         results.add(result.toMap());
-        print('HTTP benchmarks for ${config.framework} completed successfully. [${stopwatch.elapsed.inMilliseconds}ms]');
-        stopwatch.reset();
+        print('HTTP benchmarks for ${config.framework} completed successfully.');
       } catch (e) {
         print('Error running HTTP benchmarks for ${config.framework}: $e');
-        stopwatch.reset();
         rethrow;
       }
     }
