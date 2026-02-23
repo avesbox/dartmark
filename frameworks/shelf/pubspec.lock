@@ -186,7 +186,7 @@ packages:
     source: hosted
     version: "2.2.0"
   path:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: path
       sha256: "75cca69d1490965be98c73ceaea117e8a04dd21217b37b292c9ddbec0d955bc5"
@@ -210,7 +210,7 @@ packages:
     source: hosted
     version: "2.2.0"
   shelf:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shelf
       sha256: e7dd780a7ffb623c57850b33f43309312fc863fb6aa3d276a754bb299839ef12

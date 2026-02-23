@@ -61,11 +61,9 @@ class HttpRunner {
     try {
       await _waitForReady(config);
       await _warmup(config);
-      final result = await _execute(config);
-      _stopServer(server);
-      return result;
+      return await _execute(config);
     } finally {
-      _stopServer(server);
+      await _stopServer(server, config);
     }
   }
 
@@ -109,6 +107,10 @@ class HttpRunner {
       },
       mode: ProcessStartMode.detachedWithStdio,
     );
+
+    process.stdout.listen((_) {});
+    process.stderr.listen((_) {});
+
     return process;
   }
 
@@ -225,12 +227,58 @@ class HttpRunner {
     return _OhaRunResult(result.stdout as String, result.stderr as String, result.exitCode);
   }
 
-  void _stopServer(Process process) {
+  Future<void> _stopServer(Process process, HttpBenchmarkConfig config) async {
     try {
-      process.kill(ProcessSignal.sigterm);
+      await _signalProcessTree(process.pid, force: false);
+      await process.exitCode.timeout(const Duration(seconds: 3));
+    } catch (_) {
+      try {
+        await _signalProcessTree(process.pid, force: true);
+        await process.exitCode.timeout(const Duration(seconds: 2));
+      } catch (_) {
+        // best effort
+      }
+    }
+
+    try {
+      await _killResidualByPort(config.http.baseUrl);
     } catch (_) {
       // best effort
     }
+  }
+
+  Future<void> _signalProcessTree(int pid, {required bool force}) async {
+    if (Platform.isWindows) {
+      final args = <String>['/PID', '$pid', '/T'];
+      if (force) {
+        args.add('/F');
+      }
+      await Process.run('taskkill', args);
+      return;
+    }
+
+    final childSignal = force ? '-KILL' : '-TERM';
+    final parentSignal = force ? ProcessSignal.sigkill : ProcessSignal.sigterm;
+
+    try {
+      await Process.run('pkill', [childSignal, '-P', '$pid']);
+    } catch (_) {
+      // pkill may not be available; continue with parent signal
+    }
+
+    Process.killPid(pid, parentSignal);
+  }
+
+  Future<void> _killResidualByPort(String baseUrl) async {
+    final uri = Uri.parse(baseUrl);
+    final port = uri.hasPort ? uri.port : (uri.scheme == 'https' ? 443 : 80);
+
+    if (Platform.isWindows) {
+      return;
+    }
+
+    await Process.run('sh', ['-c', 'fuser -k ${port}/tcp >/dev/null 2>&1 || true']);
+    await Process.run('sh', ['-c', 'lsof -ti tcp:$port | xargs -r kill -9 >/dev/null 2>&1 || true']);
   }
 
   _OhaParsed _parseOhaOutput(String stdout, String stderr, int exitCode) {
