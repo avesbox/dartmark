@@ -18,7 +18,7 @@ import { HeartIcon } from './icons';
             class="lg:col-span-6"
           >
             <div class="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6">
-              We benchmarks
+              We benchmark & compare the best
               <span class="text-primary">Dart & Flutter</span>
               packages
             </div>
