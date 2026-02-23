@@ -28,8 +28,6 @@ RUN ls -la
 
 COPY ./docs/. .
 
-RUN ls -la /app/docs/data
-
 COPY --from=benchmark /app/docs/data ./data
 
 RUN ls -la
