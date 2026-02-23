@@ -7,7 +7,7 @@ RUN dart pub get
 
 # Install pinned oha for HTTP benchmarks
 RUN apt-get update && apt-get install -y curl ca-certificates \
-	&& curl -L https://github.com/hatoo/oha/releases/download/v0.6.4/oha-linux-amd64 -o /usr/local/bin/oha \
+	&& curl -L https://github.com/hatoo/oha/releases/download/v1.13.0/oha-linux-amd64 -o /usr/local/bin/oha \
 	&& chmod +x /usr/local/bin/oha \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 

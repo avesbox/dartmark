@@ -197,17 +197,28 @@ class HttpRunner {
       args.addAll(['-d', config.load.body!]);
     }
     args.add('--no-tui');
-    args.addAll(['--output-format', 'json']);
     args.addAll(config.oha.extraArgs);
     final url = '${config.http.baseUrl}${config.http.endpoint}';
     args.add(url);
 
-    final result = await Process.run(
+    ProcessResult result = await Process.run(
       config.oha.binaryPath,
-      args,
+      [...args, '--output-format', 'json'],
       runInShell: false,
       workingDirectory: config.projectPath,
     );
+
+    if (
+        result.exitCode != 0 &&
+        (result.stderr as String).contains("unexpected argument '--output-format'")) {
+      result = await Process.run(
+        config.oha.binaryPath,
+        [...args, '--json'],
+        runInShell: false,
+        workingDirectory: config.projectPath,
+      );
+    }
+
     if (result.exitCode != 0) {
       throw StateError('oha $label run failed: ${result.stderr}');
     }
