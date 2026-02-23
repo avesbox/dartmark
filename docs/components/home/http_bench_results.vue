@@ -10,7 +10,7 @@
 
   onMounted(() => {
     specs.value = [
-      { label: 'DATE', value: new Date(Mapper.instance.validationBenchmarks?.date).toLocaleDateString() ?? 'N/A' },
+      { label: 'DATE', value: new Date(Mapper.instance.validationBenchmarks?.date ?? new Date()).toLocaleDateString() ?? 'N/A' },
       { label: 'CPU', value: Mapper.instance.validationBenchmarks?.cpu ?? 'N/A' },
       { label: 'MEMORY', value: Mapper.instance.validationBenchmarks?.memory ?? 'N/A' },
       { label: 'OS', value: Mapper.instance.validationBenchmarks?.system ?? 'N/A' },
@@ -35,7 +35,7 @@
             :transition="{ duration: 0.6 }"
             class="lg:col-span-4"
           >
-            <span class="tag text-muted-foreground mb-4 block w-fit">{{ Mapper.instance.backendBenchmarks.packages.length }} packages</span>
+            <span class="tag text-muted-foreground mb-4 block w-fit">{{ Mapper.instance.backendBenchmarks?.packages.length ?? 0 }} packages</span>
             <div class="text-4xl md:text-5xl font-display font-bold leading-tight">
               Web Frameworks
             </div>

@@ -65,7 +65,7 @@ export default defineConfig({
   sitemap: {
     hostname: 'https://dartmark.dev',
   },
-  lastUpdated: true,
+  lastUpdated: false,
   appearance: {
     initialValue: undefined
   },

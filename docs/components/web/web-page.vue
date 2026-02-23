@@ -24,12 +24,12 @@ const pkg = ref<HttpPackage | undefined>(undefined)
 const data = ref<Record<string, any>[]>([])
 
 onMounted(() => {
-	const records = Mapper.instance.backendBenchmarks.results
-	pkg.value = Mapper.instance.backendBenchmarks.packages.find((p) => p.framework === (props?.pkg ?? params.value?.pkg))
+	const records = Mapper.instance.backendBenchmarks?.results || []
+	pkg.value = Mapper.instance.backendBenchmarks?.packages.find((p) => p.framework === (props?.pkg ?? params.value?.pkg))
 	const packageRecords = records.find((v) => v.framework === (props?.pkg ?? params.value?.pkg))
 	if (packageRecords) {
 		data.value.push(
-			{ 'rps': Number(packageRecords.rps).toFixed(2), 'rps_unit': 'req/s', 'latency_unit': 'ms', 'stability_unit': '%',  'latency': Number(packageRecords.latency).toFixed(2), 'stability': 100 - Number(packageRecords.stability).toFixed(2) },
+			{ 'rps': Number(packageRecords.rps).toFixed(2), 'rps_unit': 'req/s', 'latency_unit': 'ms', 'stability_unit': '%',  'latency': Number(packageRecords.latency).toFixed(2), 'stability': (100 - Number(packageRecords.stability ?? 0)).toFixed(2) },
 		)
 	}
 	// const objects: Record<string, any>[] = [

@@ -16,7 +16,7 @@ const data = ref<any>([])
 const specs = ref<any>([])
 
 onMounted(() => {
-	const records = Mapper.instance.backendBenchmarks.results
+	const records = Mapper.instance.backendBenchmarks?.results || []
 	for (const record of records) {
 		data.value.push({
 			'name': record.framework,
@@ -30,7 +30,7 @@ onMounted(() => {
 		})
 	}
 	specs.value = [
-		{ label: 'DATE', value: new Date(Mapper.instance.validationBenchmarks?.date).toLocaleDateString() ?? 'N/A' },
+		{ label: 'DATE', value: new Date(Mapper.instance.validationBenchmarks?.date ?? new Date()).toLocaleDateString() ?? 'N/A' },
 		{ label: 'CPU', value: Mapper.instance.validationBenchmarks?.cpu ?? 'N/A' },
 		{ label: 'MEMORY', value: Mapper.instance.validationBenchmarks?.memory ?? 'N/A' },
 		{ label: 'OS', value: Mapper.instance.validationBenchmarks?.system ?? 'N/A' },

@@ -94,8 +94,8 @@ type ValidationResult = {
 export class Mapper {
     static #instance: Mapper;
 
-	readonly backendBenchmarks: HttpBenchmarks = charts.filter((benchmark: any) => benchmark.id === 'http')?.[0] || {};
-	readonly validationBenchmarks: ValidationBenchmarks = charts.filter((benchmark: any) => benchmark.id === 'validation')?.[0] || {};
+	readonly backendBenchmarks: HttpBenchmarks | undefined = charts.filter((benchmark: any) => benchmark.id === 'http')?.[0];
+	readonly validationBenchmarks: ValidationBenchmarks | undefined = charts.filter((benchmark: any) => benchmark.id === 'validation')?.[0];
 
     private constructor() {}
 
@@ -108,7 +108,7 @@ export class Mapper {
     }
 
 	public getBenchmarksForValidation() {
-		const results = this.validationBenchmarks.results || [];
+		const results = this.validationBenchmarks?.results || [];
 		const sortedResults = results.sort((a, b) => b.benchmarks[0].avgScore - a.benchmarks[0].avgScore);
 		for (let i = 0; i < sortedResults.length; i++) {
 			sortedResults[i].benchmarks[0].avgScorePercentage = (sortedResults[i].benchmarks[0].avgScore / sortedResults[0].benchmarks[0].avgScore) * 100;
@@ -121,7 +121,7 @@ export class Mapper {
      * executed on its instance.
      */
     public getBenchmarksForBackend() {
-		const results = this.backendBenchmarks.results || [];
+		const results = this.backendBenchmarks?.results || [];
 		const sortedResults = results.sort((a, b) => b.rps - a.rps);
 		for (let i = 0; i < sortedResults.length; i++) {
 			sortedResults[i].rpsPercentage = (sortedResults[i].rps / sortedResults[0].rps) * 100;

@@ -28,10 +28,10 @@ const pkg = ref<ValidationPackage | undefined>(undefined)
 const data = ref<any>([])
 
 onMounted(() => {
-	const records = Mapper.instance.validationBenchmarks.results
-	pkg.value = Mapper.instance.validationBenchmarks.packages.find((p) => p.name === (props?.pkg ?? params.value?.pkg))
+	const records = Mapper.instance.validationBenchmarks?.results || []
+	pkg.value = Mapper.instance.validationBenchmarks?.packages.find((p) => p.name === (props?.pkg ?? params.value?.pkg))
 	console.log(pkg);
-	const packageRecords = records.filter((v) => v.package === (props?.pkg ?? params.value?.pkg))?.[0]?.benchmarks
+	const packageRecords = records.filter((v) => v.package === (props?.pkg ?? params.value?.pkg))?.[0]?.benchmarks || []
 	const objects: Record<string, any>[] = [
 		{ type: 'SCORE', unit: 'ops/s' },
 		{ type: 'TIME', unit: 'ns/iter' }
