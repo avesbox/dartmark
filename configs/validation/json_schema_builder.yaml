@@ -1,0 +1,6 @@
+name: json_schema_builder
+publisher: Flutter
+publisherUrl: https://flutter.dev
+description: A robust and developer-friendly Dart library for creating, validating, and working with JSON Schemas. json_schema_builder provides a fluent, type-safe API to define the structure of your data, ensuring its integrity and correctness throughout your application.
+repository: https://github.com/flutter/genui/tree/main/packages/json_schema_builder
+homepage: https://flutter.dev

@@ -1,0 +1,174 @@
+{
+	"results": [
+		{
+			"framework": "dart_frog",
+			"endpoint": "http://127.0.0.1:8081/api/echo",
+			"rps": 9320.58634069874,
+			"p50": 3.359,
+			"p95": 3.7769,
+			"p99": 4.2776000000000005,
+			"latency": 3.430849038097233,
+			"stability": 7.368608138784517,
+			"errors": 0,
+			"concurrency": 32,
+			"durationSeconds": 15,
+			"requests": 0,
+			"version": "1.2.6",
+			"cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD",
+			"system": "\"Windows 11 Pro\" 10.0 (Build 26200)",
+			"memory": "unknown"
+		},
+		{
+			"framework": "dart_io",
+			"endpoint": "http://127.0.0.1:8081/api/echo",
+			"rps": 8618.729093270502,
+			"p50": 3.7426999999999997,
+			"p95": 4.2857,
+			"p99": 4.6661,
+			"latency": 3.7096314583816326,
+			"stability": 11.823652694181968,
+			"errors": 0,
+			"concurrency": 32,
+			"durationSeconds": 15,
+			"requests": 0,
+			"version": "1.0.0",
+			"cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD",
+			"system": "\"Windows 11 Pro\" 10.0 (Build 26200)",
+			"memory": "unknown"
+		},
+		{
+			"framework": "relic",
+			"endpoint": "http://127.0.0.1:8081/api/echo",
+			"rps": 9030.868490606343,
+			"p50": 3.5810999999999997,
+			"p95": 3.9798000000000004,
+			"p99": 4.222799999999999,
+			"latency": 3.5403024413270394,
+			"stability": 8.095478451629386,
+			"errors": 0,
+			"concurrency": 32,
+			"durationSeconds": 15,
+			"requests": 0,
+			"version": "1.1.0",
+			"cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD",
+			"system": "\"Windows 11 Pro\" 10.0 (Build 26200)",
+			"memory": "unknown"
+		},
+		{
+			"framework": "serinus",
+			"endpoint": "http://127.0.0.1:8081/api/echo",
+			"rps": 7912.5751965519585,
+			"p50": 4.0668,
+			"p95": 4.536700000000001,
+			"p99": 4.8279000000000005,
+			"latency": 4.040808973052157,
+			"stability": 8.78309183305627,
+			"errors": 0,
+			"concurrency": 32,
+			"durationSeconds": 15,
+			"requests": 0,
+			"version": "2.1.2",
+			"cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD",
+			"system": "\"Windows 11 Pro\" 10.0 (Build 26200)",
+			"memory": "unknown"
+		},
+		{
+			"framework": "shelf",
+			"endpoint": "http://127.0.0.1:8081/api/echo",
+			"rps": 6951.84775972817,
+			"p50": 4.6335999999999995,
+			"p95": 5.12,
+			"p99": 5.4374,
+			"latency": 4.600188450040232,
+			"stability": 8.203264725352653,
+			"errors": 0,
+			"concurrency": 32,
+			"durationSeconds": 15,
+			"requests": 0,
+			"version": "1.4.2",
+			"cpu": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD",
+			"system": "\"Windows 11 Pro\" 10.0 (Build 26200)",
+			"memory": "unknown"
+		}
+	],
+	"date": "2026-02-23T21:46:05.984288",
+	"dart": "3.11.0 (stable) (Mon Feb 9 00:38:07 2026 -0800) on \"windows_x64\"",
+	"packages": [
+		{
+			"framework": "dart_frog",
+			"version": "1.2.6",
+			"description": "The standard Dart HTTP server implementation, using the `dart:io` library.",
+			"publisher": "dart-frog.dev",
+			"publisherUrl": "https://dart-frog.dev",
+			"repository": "https://github.com/dart-frog-dev/dart_frog",
+			"homepage": "https://dart-frog.dev",
+			"features": []
+		},
+		{
+			"framework": "dart_io",
+			"version": "1.0.0",
+			"description": "The standard Dart HTTP server implementation, using the `dart:io` library.",
+			"publisher": "dart.dev",
+			"publisherUrl": "https://dart.dev",
+			"repository": "https://dart.dev",
+			"homepage": "https://dart.dev",
+			"features": []
+		},
+		{
+			"framework": "relic",
+			"version": "1.1.0",
+			"description": "A lightweight and flexible web server inspired by Shelf for building APIs and backend services.",
+			"publisher": "serverpod.dev",
+			"publisherUrl": "https://serverpod.dev",
+			"repository": "https://github.com/serverpod/relic",
+			"homepage": "https://serverpod.dev",
+			"features": []
+		},
+		{
+			"framework": "serinus",
+			"version": "2.1.2",
+			"description": "Serinus is a framework for building robust and scalable Dart server-side applications. It leverges the power of OOP and the flexibility of Dart to provide a simple and efficient way to build server-side applications.",
+			"publisher": "Avesbox",
+			"publisherUrl": "https://avesbox.com",
+			"repository": "https://github.com/francescovallone/serinus",
+			"homepage": "https://serinus.app",
+			"features": [
+				{
+					"title": "Just Return",
+					"description": "Return anything from handlers: Strings, Maps, Lists, Streams, Files, Futures. Zero boilerplate."
+				},
+				{
+					"title": "Specialized Tools",
+					"description": "Hooks, Exception Filters, and Pipes. Full control over your application flow."
+				},
+				{
+					"title": "Real-time Ready",
+					"description": "WebSockets and SSE built-in. Push updates instantly with zero config."
+				},
+				{
+					"title": "Universal Adapters",
+					"description": "REST APIs, Microservices, and more. Same framework, different adapters."
+				},
+				{
+					"title": "Type-Safe",
+					"description": "Leverage Dart's type system. Catch errors at compile time, not runtime."
+				},
+				{
+					"title": "OpenAPI Native",
+					"description": "Unique in Dart. Generate complete API docs with just one import."
+				}
+			]
+		},
+		{
+			"framework": "shelf",
+			"version": "1.4.2",
+			"description": "A model for web server middleware that encourages composition and easy reuse.",
+			"publisher": "dart.dev",
+			"publisherUrl": "https://dart.dev",
+			"repository": "https://github.com/dart-lang/shelf/tree/master/pkgs/shelf",
+			"homepage": "https://github.com/dart-lang/shelf/tree/master/pkgs/shelf",
+			"features": []
+		}
+	],
+	"id": "http"
+}

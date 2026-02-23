@@ -1,0 +1,19 @@
+name: 'vine'
+description: Vine is a robust, type-safe and composable typed validation library for Dart/Flutter, inspired by Vine.js from Adonis framework, designed to simplify and secure data in applications.
+publisherUrl: https://github.com/LeadcodeDev
+publisher: LeadcodeDev
+homepage: https://github.com/LeadcodeDev/vine
+repository: https://github.com/LeadcodeDev/vine
+features:
+  - title: Built-in validators
+    description: 70+
+  - title: OpenAPI Support
+    description: Export and share your validation schema as OpenAPI spec.
+  - title: Complex Validation
+    description: Vine supports an infinite number of validation combinations, regardless of their depth or complexity.
+  - title: Business modifiers
+    description: Add modifiers to your schemas to add strong validation constraints and represent your business needs.
+  - title: Composable
+    description: Design independent, reusable diagrams so that you can assemble them to suit your needs.
+  - title: Expandable
+    description: Vine offers over 70+ ready-to-use validation rules, but you can also create your own custom rules.

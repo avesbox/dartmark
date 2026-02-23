@@ -1,0 +1,48 @@
+framework: serinus
+projectPath: frameworks/serinus
+version: 2.1.2
+description: Serinus is a framework for building robust and scalable Dart server-side applications. It leverges the power of OOP and the flexibility of Dart to provide a simple and efficient way to build server-side applications.
+publisher: Avesbox
+publisherUrl: https://avesbox.com
+repository: https://github.com/francescovallone/serinus
+homepage: https://serinus.app
+features:
+  - title: Just Return
+    description: "Return anything from handlers: Strings, Maps, Lists, Streams, Files, Futures. Zero boilerplate."
+  - title: Specialized Tools
+    description: Hooks, Exception Filters, and Pipes. Full control over your application flow.
+  - title: Real-time Ready
+    description: WebSockets and SSE built-in. Push updates instantly with zero config.
+  - title: Universal Adapters
+    description: REST APIs, Microservices, and more. Same framework, different adapters.
+  - title: Type-Safe
+    description: Leverage Dart's type system. Catch errors at compile time, not runtime.
+  - title: OpenAPI Native
+    description: Unique in Dart. Generate complete API docs with just one import.
+build:
+  command: dart
+  args: ["compile", "exe", "bin/serinus_bench.dart", "-o", "bin/server.exe"]
+run:
+  command: bin/server.exe
+  env:
+    PORT: 8081
+http:
+  baseUrl: http://127.0.0.1:8081
+  endpoint: /api/echo
+  waitForReady:
+    path: /health
+    timeoutSeconds: 10
+    intervalMillis: 200
+load:
+  warmupSeconds: 3
+  durationSeconds: 15
+  concurrency: 32
+  connections: 0          # unthrottled unless you set it
+  requests: 0             # duration-based
+  timeoutSeconds: 5
+  headers:
+    - "Content-Type: application/json"
+  body: '{"hello":"world"}'
+oha:
+  binaryPath: oha
+  extraArgs: []

@@ -1,11 +1,12 @@
 import DefaultTheme from 'vitepress/theme'
 import './style.css'
-import Package from './package.vue'
+import Layout from './layout.vue'
+import { EnhanceAppContext } from 'vitepress'
 
 export default {
     extends: DefaultTheme,
-    enhanceApp({ app, router, siteData }) {
-        // register global components
-        app.component('package', Package)
-    },
+    Layout,
+    enhanceApp(ctx: EnhanceAppContext) {
+        DefaultTheme?.enhanceApp?.(ctx)
+    }
 }

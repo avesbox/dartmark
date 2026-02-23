@@ -1,0 +1,35 @@
+framework: dart_io
+projectPath: frameworks/dart_io
+description: The standard Dart HTTP server implementation, using the `dart:io` library.
+publisher: dart.dev
+publisherUrl: https://dart.dev
+version: 1.0.0
+homepage: https://dart.dev
+repository: https://dart.dev
+build:
+  command: dart
+  args: ["compile", "exe", "bin/dart_io.dart", "-o", "bin/server.exe"]
+run:
+  command: bin/server.exe
+  env:
+    PORT: 8081
+http:
+  baseUrl: http://127.0.0.1:8081
+  endpoint: /api/echo
+  waitForReady:
+    path: /health
+    timeoutSeconds: 10
+    intervalMillis: 200
+load:
+  warmupSeconds: 3
+  durationSeconds: 15
+  concurrency: 32
+  connections: 0          # unthrottled unless you set it
+  requests: 0             # duration-based
+  timeoutSeconds: 5
+  headers:
+    - "Content-Type: application/json"
+  body: '{"hello":"world"}'
+oha:
+  binaryPath: oha
+  extraArgs: []

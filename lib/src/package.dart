@@ -15,3 +15,14 @@ abstract class Package {
   Future<void> run();
 
 }
+
+class ConfigFeature {
+  final String title;
+  final String description;
+
+  ConfigFeature({
+    required this.title,
+    required this.description,
+  });
+
+}

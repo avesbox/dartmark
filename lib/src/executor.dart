@@ -1,56 +1,190 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dartmark/src/validation_config.dart';
 import 'package:yaml/yaml.dart';
 
+import 'package:dartmark/src/http_config.dart';
+import 'package:dartmark/src/http_runner.dart';
+
 class Executor {
+  final List<String> validationConfigs;
+  final List<String> httpConfigs;
 
-  final List<String> packages;
-
-  Executor(this.packages);
+  Executor({
+    this.validationConfigs = const [],
+    this.httpConfigs = const [],
+  });
 
   Future<void> execute() async {
+    if (validationConfigs.isNotEmpty) {
+      await _runValidation();
+    }
+    if (httpConfigs.isNotEmpty) {
+      await _runHttp();
+    }
+  }
+
+  Future<void> _runValidation() async {
     final List<Map<String, dynamic>> results = [];
     final File file = File('docs/data/results.json');
     if (file.existsSync()) {
       file.deleteSync();
     }
+    final packages = <ValidationConfig>[];
     file.createSync(recursive: true);
     final dependencies = File('pubspec.yaml').readAsStringSync();
     YamlMap yaml = loadYaml(dependencies);
     final pubspec = yaml.nodes['dependencies']?.value;
-    for (var package in packages) {
-      print('Starting benchmarks for $package...');
-      final compile = await Process.run('dart', ['compile', 'exe', 'lib/src/$package.dart', '-o', 'bin/$package.exe']);
+    final stopwatch = Stopwatch()..start();
+    for (var path in validationConfigs) {
+      final configFile = File(path);
+      if (!configFile.existsSync()) {
+        print('Validation config not found at $path, skipping');
+        stopwatch.reset();
+        continue;
+      }
+      final config = ValidationConfig.fromYaml(configFile);
+      packages.add(config);
+      print('Starting benchmarks for ${config.name}...');
+      final compile = await Process.run(
+        'dart',
+        ['compile', 'exe', 'lib/src/${config.name}.dart', '-o', 'bin/${config.name}.exe'],
+      );
       if (compile.exitCode != 0) {
-        print('Error compiling $package: ${compile.stderr}');
+        print('Error compiling ${config.name}: ${compile.stderr}');
+        stopwatch.reset();
         continue;
       }
-      final benchProcess = await Process.run('bin/$package.exe', []);
+      final benchProcess = await Process.run('bin/${config.name}.exe', []);
       if (benchProcess.exitCode != 0) {
-        print('Error running benchmarks for $package: ${benchProcess.stderr}');
+        print('Error running benchmarks for ${config.name}: ${benchProcess.stderr}');
+        stopwatch.reset();
         continue;
       }
-      File('bin/$package.exe').deleteSync();
-      print('Benchmarks for $package completed successfully.');
+      File('bin/${config.name}.exe').deleteSync();
+      print('Benchmarks for ${config.name} completed successfully. [${stopwatch.elapsed.inMilliseconds}ms]');
       final data = benchProcess.stdout;
       final lines = data.split('\n');
       for (var line in lines) {
         if (line.isNotEmpty) {
           final result = jsonDecode(line);
-          result['version'] = pubspec[package]?.toString() ?? 'unknown';
           results.add(result);
         }
       }
     }
+    final mappedResults = [];
+    for (final result in results) {
+      final hasPackageAlready = mappedResults.any((r) => r['package'] == result['group']);
+      if (!hasPackageAlready) { 
+        final packageResults = results.where((r) => r['group'] == result['group']).toList();
+        mappedResults.add({
+          'package': result['group'],
+          'benchmarks': [
+            for (final r in packageResults)
+              {
+                "name": r['name'],
+                "warningMessage": r['warningMessage'],
+                "avgScore": r['avgScore'],
+                "avgScorePerSecond": r['avgScorePerSecond'],
+                "stdDevPercentage": r['stdDevPercentage'],
+                "stdDev": r['stdDev'],
+                "best": r['best'],
+                "differenceFromBest": r['differenceFromBest'],
+                "worst": r['worst'],
+                "avgTime": r['avgTime'],
+                "minTime": r['minTime'],
+                "maxTime": r['maxTime'],
+                "p75Time": r['p75Time'],
+                "p95Time": r['p95Time'],
+                "p99Time": r['p99Time'],
+                "p999Time": r['p999Time'],
+              }
+          ],
+          'version': pubspec[result['group']]?.toString() ?? 'unknown',
+        });
+      }
+    }
     file.writeAsStringSync(jsonEncode({
-      'results': results,
+      'results': mappedResults,
       'date': DateTime.now().toIso8601String(),
       'cpu': results.map((e) => e['cpu']).toSet().firstOrNull,
       'memory': results.map((e) => e['memory']).toSet().firstOrNull,
       'system': results.map((e) => e['system']).toSet().firstOrNull,
       'dart': Platform.version,
+      'packages': [
+        for (final p in packages)
+          {
+            'name': p.name,
+            'version': pubspec[p.name]?.toString() ?? 'unknown',
+            'description': p.description,
+            'publisher': p.publisher,
+            'publisherUrl': p.publisherUrl,
+            'repository': p.repository,
+            'homepage': p.homepage,
+            'features': [
+              for (final f in p.features)
+                {
+                  'title': f.title,
+                  'description': f.description,
+                }
+            ],
+          }
+      ],
+      'id': 'validation'
     }));
   }
 
+  Future<void> _runHttp() async {
+    final runner = HttpRunner();
+    final List<Map<String, dynamic>> results = [];
+    final File file = File('docs/data/results-http.json');
+    if (file.existsSync()) {
+      file.deleteSync();
+    }
+    file.createSync(recursive: true);
+    final libriaries = <Map<String, Object?>>[];
+    final stopwatch = Stopwatch()..start();
+    for (final path in httpConfigs) {
+      final configFile = File(path);
+      if (!configFile.existsSync()) {
+        print('HTTP config not found at $path, skipping');
+        stopwatch.reset();
+        continue;
+      }
+      final config = HttpBenchmarkConfig.fromYaml(configFile);
+      libriaries.add({
+        'framework': config.framework,
+        'version': config.version ?? 'unknown',
+        'description': config.description,
+        'publisher': config.publisher,
+        'publisherUrl': config.publisherUrl,
+        'repository': config.repository,
+        'homepage': config.homepage,
+        'features': config.features.map((f) => {
+          'title': f.title,
+          'description': f.description,
+        }).toList(),
+      });
+      print('Starting HTTP benchmarks for ${config.framework}...');
+      try {
+        final result = await runner.run(config);
+        results.add(result.toMap());
+        print('HTTP benchmarks for ${config.framework} completed successfully. [${stopwatch.elapsed.inMilliseconds}ms]');
+        stopwatch.reset();
+      } catch (e) {
+        print('Error running HTTP benchmarks for ${config.framework}: $e');
+        stopwatch.reset();
+        rethrow;
+      }
+    }
+    print('All HTTP benchmarks completed.');
+    file.writeAsStringSync(jsonEncode({
+      'results': results,
+      'date': DateTime.now().toIso8601String(),
+      'dart': Platform.version,
+      'packages': libriaries,
+      'id': 'http'
+    }));
+  }
 }

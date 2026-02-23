@@ -1,35 +1,97 @@
 import { defineConfig } from 'vitepress'
+import Tailwind from '@tailwindcss/vite'
+import { serinusNocturneTheme, serinusParchmentTheme } from './theme/serinus-parchment'
+import llmstxt from 'vitepress-plugin-llms'
 
 // https://vitepress.dev/reference/site-config
+
+const description = "Dartmark is a benchmarking platform for Dart and Flutter packages, helping developers make informed decisions about which packages to use in their projects."
 export default defineConfig({
   title: "Dartmark",
+  titleTemplate: ':title',
+  description,
   head: [
-    ['link', { rel: "icon", type: "image/png", sizes: "32x32", href: "/logo-32x32.png"}],
-    ['link', { rel: "icon", type: "image/png", sizes: "16x16", href: "/logo-16x16.png"}],
-    ['meta', { property: 'og:title', content: 'Dartmark'}],
-    ['meta', { name: 'description', content: 'Benchmarking validation libraries for Dart & Flutter'}],
-    ['meta', { property: 'og:description', content: 'Benchmarking validation libraries for Dart & Flutter'}],
+    [
+        'link',
+        {
+            rel: 'icon',
+            href: '/logo.png'
+        }
+    ],
+    [
+        'meta',
+        {
+            name: 'viewport',
+            content: 'width=device-width,initial-scale=1,user-scalable=no'
+        }
+    ],
+    [
+        'meta',
+        {
+            property: 'og:title',
+            content: 'Loxia'
+        }
+    ],
+    [
+        'meta',
+        {
+            property: 'og:description',
+            content: description
+        }
+    ],
+    [
+        'meta',
+        {
+            property: 'keywords',
+            content: 'dartmark, dart benchmarking, flutter benchmarking, dart packages, flutter packages, dart performance, flutter performance'
+        }
+    ],
   ],
-  appearance: 'force-dark',
-  themeConfig: {
-    footer: {
-      copyright: 'Copyright © 2025 Avesbox',
-      message: 'Built with 💙 by <a href="https://github.com/avesbox">Avesbox</a>'
+  markdown: {
+    image: {
+      lazyLoading: true
     },
-    nav: [
-      { text: 'Avesbox', link: 'https://avesbox.com' },
-
-    ],
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/avesbox/dartmark' },
-      { icon: 'x', link: 'https://x.com/avesboxx' },
-      { icon: 'discord', link: 'https://discord.gg/zydgnJ3ksJ' },
-      { icon: 'youtube', link: 'https://www.youtube.com/@avesbox' }
-    ],
-    logo: '/logo.png',
+    theme: {
+      light: {
+        ...serinusParchmentTheme,
+        type: "light"
+      },
+      dark: {
+        ...serinusNocturneTheme,
+        type: "dark"
+      }
+    },
   },
   sitemap: {
     hostname: 'https://dartmark.dev',
-    lastmodDateOnly: false
+  },
+  lastUpdated: true,
+  appearance: {
+    initialValue: undefined
+  },
+  ignoreDeadLinks: true,
+  themeConfig: {
+    // footer: {
+    //   copyright: 'Copyright © 2025 Francesco Vallone',
+    //   message: 'Built with 💙 and Dart 🎯 | One of the 🐤 of <a href="https://github.com/avesbox">Avesbox</a>',
+    // },
+    // https://vitepress.dev/reference/default-theme-config
+    logo: '/logo.png',
+    search: undefined,
+    nav: [
+      { text: 'Validation Benchmarks', link: '/validation/' },
+      { text: 'Web Benchmarks', link: '/web/' },
+    ],
+    sidebar: [],
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/avesbox' },
+      { icon: 'twitter', link: 'https://twitter.com/avesboxx'},
+      { icon: 'discord', link: 'https://discord.gg/zydgnJ3ksJ' }
+    ],
+  },
+  vite: {
+    plugins: [
+      Tailwind(),
+    ]
   }
 })

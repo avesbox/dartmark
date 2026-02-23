@@ -1,0 +1,6 @@
+name: ack
+publisher: Leo Farias 
+publisherUrl: https://github.com/leoafarias
+description: A simple validation library for Dart
+repository: https://github.com/btwld/ack
+homepage: https://pub.dev/packages/ack

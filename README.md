@@ -2,6 +2,11 @@
 
 Dartmark is a fun experiment to create benchmarks for some Dart and Flutter libraries.
 
+There are two benchmark tracks:
+
+- Validation benchmarks (existing flow) writing to `docs/data/results.json`.
+- HTTP framework benchmarks (new) writing to `docs/data/results-http.json`.
+
 ## Benchmarks
 
 To see the benchmarks, you can visit the [website](https://dartmark.dev).
@@ -17,6 +22,46 @@ You can add a custom file for the website in the `docs/packages` folder. The fil
 
 > [!NOTE]
 > Currently we don't support custom logos for the libraries, but it could be added in the future. If you want to add a logo, please create an issue in the repository and we will add it for you.
+
+## How to add an HTTP framework benchmark
+
+1. Create a config file under `configs/http/<framework>.yaml` using the schema:
+
+	 ```yaml
+	 framework: serinus
+	 projectPath: frameworks/serinus
+	 version: 1.0.0
+	 build:
+		 command: dart
+		 args: ["compile", "exe", "bin/server.dart", "-o", "build/server.exe"]
+	 run:
+		 command: ./build/server.exe
+		 env:
+			 PORT: 8081
+	 http:
+		 baseUrl: http://127.0.0.1:8081
+		 endpoint: /api/echo
+		 waitForReady:
+			 path: /health
+			 timeoutSeconds: 10
+			 intervalMillis: 200
+	 load:
+		 warmupSeconds: 5
+		 durationSeconds: 20
+		 concurrency: 64
+		 connections: 0          # 0 means unthrottled
+		 requests: 0             # 0 or omit to use duration-based
+		 timeoutSeconds: 5
+		 headers:
+			 - "Content-Type: application/json"
+		 body: '{"hello":"world"}'
+	 oha:
+		 binaryPath: /usr/local/bin/oha
+		 extraArgs: []
+	 ```
+
+2. Ensure the project at `projectPath` can be AOT-built and run with the provided commands.
+3. Run `dart run`; HTTP results will be written to `docs/data/results-http.json` and will cause the run to fail if the server crashes or `oha` exits with errors (non-2xx/timeouts count toward error totals).
 
 ## How the benchmarks are run
 

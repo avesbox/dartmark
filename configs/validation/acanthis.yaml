@@ -1,0 +1,19 @@
+name: 'acanthis'
+description: Acanthis is a simple and easy to use validation library for Dart. It is inspired by Zod although it is not a port of it. Acanthis is tailored to the Dart language and its features and is type-safe and composable.
+publisher: Avesbox
+publisherUrl: https://avesbox.com
+repository: https://github.com/avesbox/acanthis
+homepage: https://acanthis.avesbox.com
+features:
+  - title: Built-in validators
+    description: 60+ built-in validators for common use cases, such as strings, numbers, arrays, objects, and more.
+  - title: JSON Schema
+    description: Generate JSON Schema from all your validators with one simple method.
+  - title: Async Validation
+    description: Validate your data against async validators to ensure validity even in the most complex scenarios.
+  - title: Metadata
+    description: Add all the information you need to your validators, including descriptions, examples, and more.
+  - title: Recursive Objects
+    description: Validate recursive objects with ease, allowing you to create even more complex data structures.
+  - title: Dependencies
+    description: Add dependencies between validators to ensure that your data is valid in all scenarios.

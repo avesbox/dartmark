@@ -1,0 +1,6 @@
+name: 'luthor'
+description: Pure Dart validation library inspired by https://zod.dev
+publisher: ex3.dev
+publisherUrl: https://ex3.dev
+repository: https://github.com/exaby73/luthor
+homepage: https://luthor.netlify.app/
