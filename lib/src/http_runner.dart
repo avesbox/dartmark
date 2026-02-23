@@ -70,6 +70,16 @@ class HttpRunner {
   }
 
   Future<void> _build(HttpBenchmarkConfig config) async {
+    final pubGet = await Process.run(
+      'dart',
+      ['pub', 'get'],
+      workingDirectory: config.projectPath,
+    );
+
+    if (pubGet.exitCode != 0) {
+      throw StateError('Dependency resolution failed: ${pubGet.stderr}');
+    }
+
     final result = await Process.run(
       config.build.command,
       config.build.args,
