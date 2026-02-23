@@ -93,7 +93,7 @@ class HttpRunner {
   Future<Process> _startServer(HttpBenchmarkConfig config) async {
     final executablePath = File(
       '${config.projectPath}/${config.run.command}'.replaceAll('/', Platform.pathSeparator),
-    ).path;
+    ).absolute.path;
 
     if (!File(executablePath).existsSync()) {
       throw StateError('Server executable not found at: $executablePath');
