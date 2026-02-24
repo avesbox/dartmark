@@ -15,7 +15,6 @@
       { label: 'MEMORY', value: Mapper.instance.validationBenchmarks?.memory ?? 'N/A' },
       { label: 'OS', value: Mapper.instance.validationBenchmarks?.system ?? 'N/A' },
       { label: 'Dart', value: (Mapper.instance.validationBenchmarks?.dart ?? 'N/A').split(' ')[0] },
-      { label: 'Testing Tool', value: 'OHA 1.13.0' }
     ]
   })
 </script>
