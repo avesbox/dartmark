@@ -244,12 +244,6 @@ class HttpRunner {
         // best effort
       }
     }
-
-    try {
-      await _killResidualByPort(config.http.baseUrl);
-    } catch (_) {
-      // best effort
-    }
   }
 
   Future<void> _signalProcessTree(int pid, {required bool force}) async {
@@ -272,18 +266,6 @@ class HttpRunner {
     }
 
     Process.killPid(pid, parentSignal);
-  }
-
-  Future<void> _killResidualByPort(String baseUrl) async {
-    final uri = Uri.parse(baseUrl);
-    final port = uri.hasPort ? uri.port : (uri.scheme == 'https' ? 443 : 80);
-
-    if (Platform.isWindows) {
-      return;
-    }
-
-    await Process.run('sh', ['-c', 'fuser -k ${port}/tcp >/dev/null 2>&1 || true']);
-    await Process.run('sh', ['-c', 'lsof -ti tcp:$port | xargs -r kill -9 >/dev/null 2>&1 || true']);
   }
 
   _OhaParsed _parseOhaOutput(String stdout, String stderr, int exitCode) {

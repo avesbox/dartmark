@@ -40,9 +40,9 @@ const options = computed(() => props.options || defaultOptions)
       :animate="{ opacity: 1, y: 0 }"
       :class="['inline-flex items-center gap-3 px-4 py-2 rounded-full bg-serinus-dark border border-border-imp fixed bottom-16 right-16', props.className]"
     >
-      <span className="text-sm text-muted-foreground font-medium font-mono">Open in</span>
+      <span class="text-sm text-muted-foreground font-medium font-mono">Open in</span>
       
-      <div className="flex items-center gap-1">
+      <div class="flex items-center gap-1">
         <motion.a
 			v-for="(option, index) in options"
             :key="option.name"

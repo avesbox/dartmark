@@ -35,6 +35,7 @@ onMounted(() => {
 		{ label: 'MEMORY', value: Mapper.instance.validationBenchmarks?.memory ?? 'N/A' },
 		{ label: 'OS', value: Mapper.instance.validationBenchmarks?.system ?? 'N/A' },
 		{ label: 'Dart', value: (Mapper.instance.validationBenchmarks?.dart ?? 'N/A').split(' ')[0] },
+		{ label: 'Testing Tool', value: 'OHA 1.13.0' }
 	]
 })
 </script>
@@ -96,9 +97,9 @@ onMounted(() => {
 					</span>
 				</template>
 			</Table>
-			<div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-mono text-muted-foreground">
+			<div class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-mono text-muted-foreground">
 				<span v-for="spec in specs" :key="spec.label">
-					<span className="text-foreground/60">{{ spec.label }}</span>
+					<span class="text-foreground/60">{{ spec.label }}</span>
 					{{ spec.value }}
 				</span>
 			</div>

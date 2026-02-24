@@ -71,7 +71,7 @@ onMounted(() => {
 					</p>
 				</motion.div>
 			</div>
-			<div className="flex flex-wrap items-center gap-3">
+			<div class="flex flex-wrap items-center gap-3">
 				<a
 				  v-for="link in [
 					{label: pkg?.publisher, href: pkg?.publisherUrl, external: true },
@@ -83,7 +83,7 @@ onMounted(() => {
                   :href="link.href"
                   :target="link.external ? '_blank' : undefined"
                   :rel="link.external ? 'noopener noreferrer' : undefined"
-                  className="px-4 py-2 text-sm font-medium text-muted-foreground border border-border rounded-full hover:text-primary hover:border-primary transition-colors"
+                  class="px-4 py-2 text-sm font-medium text-muted-foreground border border-border rounded-full hover:text-primary hover:border-primary transition-colors"
                 >
                   {{ link.label }} →
                 </a>
