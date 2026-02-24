@@ -5,6 +5,7 @@ import 'package:dartmark/src/http_config.dart';
 
 class HttpBenchmarkResult {
   final String framework;
+  final int coldStartMs;
   final double rps;
   final double p50;
   final double p95;
@@ -21,6 +22,7 @@ class HttpBenchmarkResult {
 
   HttpBenchmarkResult({
     required this.framework,
+    required this.coldStartMs,
     required this.rps,
     required this.p50,
     required this.p95,
@@ -39,6 +41,7 @@ class HttpBenchmarkResult {
   Map<String, dynamic> toMap() => {
         'framework': framework,
         'endpoint': endpoint,
+        'coldStartMs': coldStartMs,
         'rps': rps,
         'p50': p50,
         'p95': p95,
@@ -57,11 +60,12 @@ class HttpBenchmarkResult {
 class HttpRunner {
   Future<HttpBenchmarkResult> run(HttpBenchmarkConfig config) async {
     await _build(config);
+    final coldStartWatch = Stopwatch()..start();
     final server = await _startServer(config);
     try {
-      await _waitForReady(config);
+      final coldStartMs = await _waitForReady(config, coldStartWatch);
       await _warmup(config);
-      return await _execute(config);
+      return await _execute(config, coldStartMs);
     } finally {
       await _stopServer(server, config);
     }
@@ -114,7 +118,7 @@ class HttpRunner {
     return process;
   }
 
-  Future<void> _waitForReady(HttpBenchmarkConfig config) async {
+  Future<int> _waitForReady(HttpBenchmarkConfig config, Stopwatch coldStartWatch) async {
     final uri = Uri.parse('${config.http.baseUrl}${config.http.waitForReady.path}');
     final timeout = Duration(seconds: config.http.waitForReady.timeoutSeconds);
     final interval = Duration(milliseconds: config.http.waitForReady.intervalMillis);
@@ -126,7 +130,9 @@ class HttpRunner {
           final request = await client.getUrl(uri);
           final response = await request.close();
           if (response.statusCode >= 200 && response.statusCode < 500) {
-            return;
+            await response.drain();
+            coldStartWatch.stop();
+            return coldStartWatch.elapsedMilliseconds;
           }
         } catch (_) {
         }
@@ -149,7 +155,7 @@ class HttpRunner {
     );
   }
 
-  Future<HttpBenchmarkResult> _execute(HttpBenchmarkConfig config) async {
+  Future<HttpBenchmarkResult> _execute(HttpBenchmarkConfig config, int coldStartMs) async {
     final output = await _runOha(
       config,
       durationSeconds: config.load.durationSeconds,
@@ -163,6 +169,7 @@ class HttpRunner {
     return HttpBenchmarkResult(
       framework: config.framework,
       endpoint: '${config.http.baseUrl}${config.http.endpoint}',
+      coldStartMs: coldStartMs,
       rps: parsed.rps,
       p50: parsed.p50 * 1000,
       p95: parsed.p95 * 1000,
