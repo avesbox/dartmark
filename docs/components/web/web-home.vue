@@ -27,8 +27,8 @@ onMounted(() => {
 			'rps_unit': 'req/s',
 			'latency': Number(record.latency).toFixed(2),
 			'latency_unit': 'ms',
-			'stability_unit': '%',
-			'stability': (100 - Number(record.stability)).toFixed(2),
+			'stability_unit': 'x Jitter',
+			'stability': Number(record.stability).toFixed(2),
 			'nameUrl': '/web/' + record.framework
 		})
 	}
@@ -90,8 +90,9 @@ onMounted(() => {
 					</span>
 				</template>
 				<template #cell-stability="{ record, value }">
-					<span>
+					<span class="relative">
 						{{ value }} <span class="text-xs text-muted-foreground">{{ record.stability_unit }}</span>
+						<div class="absolute none"></div>
 					</span>
 				</template>
 				<template #cell-latency="{ record, value }">

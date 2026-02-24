@@ -288,8 +288,6 @@ class HttpRunner {
     p50 = latencies['p50'];
     p95 = latencies['p95'];
     p99 = latencies['p99'];
-    final requests = json['rps'];
-    final stddev = requests['stddev'];
     double averageLatency = summary['average'];
     if (p50 == null || p95 == null || p99 == null) {
       throw StateError('Unable to parse oha output.');
@@ -300,7 +298,7 @@ class HttpRunner {
       p50: p50,
       p95: p95,
       latency: averageLatency,
-      stability: (stddev / rps) * 100,
+      stability: p99/p95,
       p99: p99,
       errors: errors,
     );

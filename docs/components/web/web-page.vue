@@ -34,11 +34,11 @@ onMounted(() => {
 				'rps': Number(packageRecords.rps).toFixed(2), 
 				'rps_unit': 'req/s', 
 				'latency_unit': 'ms', 
-				'stability_unit': '%',
+				'stability_unit': 'x Jitter',
 				'coldStartMs': packageRecords.coldStartMs.toFixed(2),
 				'coldStartMs_unit': 'ms',
 				'latency': Number(packageRecords.latency).toFixed(2), 
-				'stability': (100 - Number(packageRecords.stability ?? 0)).toFixed(2) 
+				'stability': Number(packageRecords.stability ?? 0).toFixed(2) 
 			},
 		)
 	}
