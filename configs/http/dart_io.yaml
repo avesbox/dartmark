@@ -23,7 +23,7 @@ http:
 load:
   warmupSeconds: 3
   durationSeconds: 15
-  concurrency: 32
+  concurrency: 8
   connections: 0          # unthrottled unless you set it
   requests: 0             # duration-based
   timeoutSeconds: 5
