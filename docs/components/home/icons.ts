@@ -16,6 +16,22 @@ const CopyIcon = defineComponent({
 	])
 });
 
+const QuestionIcon = defineComponent({
+	name: 'QuestionIcon',
+	setup: () => () => h('svg', {
+		viewBox: '0 0 24 24',
+		fill: 'none',
+		stroke: 'currentColor',
+		'stroke-width': '2',
+		'stroke-linecap': 'round',
+		'stroke-linejoin': 'round',
+		class: 'w-5 h-5'
+	}, [
+		h('path', { d: 'M9 9a3 3 0 1 1 6 0c0 1.657-3 3-3 3' }),
+		h('path', { d: 'M12 17h.01' }),
+		h('path', { d: 'M12 3c7.2 0 9 1.8 9 9c0 7.2 -1.8 9 -9 9c-7.2 0 -9 -1.8 -9 -9c0 -7.2 1.8 -9 9 -9' })
+	])
+});
 
 const ShieldIcon = defineComponent({
 	name: 'ShieldIcon',
@@ -388,6 +404,7 @@ export {
 	LinkedInSocialIcon,
 	LinkIcon,
 	ChatGptIcon,
+	QuestionIcon,
 	ClaudeIcon,
 	MarkdownIcon,
 	DiscordIcon,

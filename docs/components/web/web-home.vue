@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { motion } from 'motion-v'
 import { scrollVariants } from '../actions/scroll_variants'
 import Table, { Column } from '../table.vue'
 import { Mapper } from '../benchmarks/benchmarks'
+import { QuestionIcon } from '../home/icons'
 
 const myColumns: Column[] = [
   { key: 'name', label: 'Package' },
@@ -15,8 +16,45 @@ const myColumns: Column[] = [
 
 const data = ref<any>([])
 const specs = ref<any>([])
+const iconTrigger = ref<HTMLElement | null>(null)
+const tooltipVisible = ref(false)
+const tooltipPosition = ref({ top: 0, left: 0 })
+const tooltipId = 'stability-tooltip'
+
+const updateTooltipPosition = (target?: EventTarget | null) => {
+	const element = (target as HTMLElement | null) ?? iconTrigger.value
+	if (!element) {
+		return
+	}
+
+	const rect = element.getBoundingClientRect()
+	tooltipPosition.value = {
+		top: rect.bottom + 8,
+		left: rect.left,
+	}
+}
+
+const showTooltip = (event?: MouseEvent | FocusEvent) => {
+	updateTooltipPosition(event?.currentTarget)
+	tooltipVisible.value = true
+}
+
+const hideTooltip = () => {
+	tooltipVisible.value = false
+}
+
+const syncTooltipPosition = () => {
+	if (!tooltipVisible.value) {
+		return
+	}
+
+	updateTooltipPosition()
+}
 
 onMounted(() => {
+	window.addEventListener('scroll', syncTooltipPosition, true)
+	window.addEventListener('resize', syncTooltipPosition)
+
 	const records = Mapper.instance.backendBenchmarks?.results || []
 	for (const record of records) {
 		data.value.push({
@@ -40,6 +78,11 @@ onMounted(() => {
 		{ label: 'Dart', value: (Mapper.instance.validationBenchmarks?.dart ?? 'N/A').split(' ')[0] },
 		{ label: 'Testing Tool', value: 'OHA 1.13.0' }
 	]
+})
+
+onBeforeUnmount(() => {
+	window.removeEventListener('scroll', syncTooltipPosition, true)
+	window.removeEventListener('resize', syncTooltipPosition)
 })
 </script>
 
@@ -76,6 +119,24 @@ onMounted(() => {
 				:records="data" 
 				:initial-sort="{ key: 'rps', direction: 'desc' }"
 			>
+				<template #header-stability="{ column }">
+					<div class="relative flex items-center gap-1">
+						{{ column.label }} 
+						<span
+							ref="iconTrigger"
+							class="text-xs text-muted-foreground cursor-help"
+							tabindex="0"
+							aria-label="What does stability mean?"
+							:aria-describedby="tooltipVisible ? tooltipId : undefined"
+							@mouseenter="showTooltip"
+							@mouseleave="hideTooltip"
+							@focus="showTooltip"
+							@blur="hideTooltip"
+						>
+							<QuestionIcon />
+						</span>
+					</div>
+				</template>
 				<template #cell-name="{ record, value }">
 					<a
 						:href="record.nameUrl"
@@ -90,9 +151,8 @@ onMounted(() => {
 					</span>
 				</template>
 				<template #cell-stability="{ record, value }">
-					<span class="relative">
+					<span>
 						{{ value }} <span class="text-xs text-muted-foreground">{{ record.stability_unit }}</span>
-						<div class="absolute none"></div>
 					</span>
 				</template>
 				<template #cell-latency="{ record, value }">
@@ -112,6 +172,17 @@ onMounted(() => {
 					{{ spec.value }}
 				</span>
 			</div>
+			<teleport to="body">
+				<div
+					v-if="tooltipVisible"
+					:id="tooltipId"
+					class="pointer-events-none fixed z-[70] w-max max-w-[min(22rem,calc(100vw-2rem))] rounded-md border border-border bg-background px-3 py-2 text-left text-xs leading-relaxed text-muted-foreground whitespace-normal break-words shadow-lg"
+					:style="{ top: `${tooltipPosition.top}px`, left: `${tooltipPosition.left}px` }"
+					role="tooltip"
+				>
+					The stability score is calculated as the ratio of the 50th percentile latency to the 99th percentile latency. The closer this value is to 1, the more stable the framework is under load, indicating consistent performance across requests.
+				</div>
+			</teleport>
     	</div>
     </section>
 </template>
