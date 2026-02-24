@@ -14,9 +14,27 @@ export default defineConfig({
     [
         'link',
         {
-            rel: 'icon',
-            href: '/logo.png'
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '32x32',
+          href: '/logo-32x32.png'
         }
+    ],
+    [
+      'link',
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '16x16',
+        href: '/logo-16x16.png'
+      }
+    ],
+    [
+      'link',
+      {
+        rel: 'shortcut icon',
+        href: '/logo-32x32.png'
+      }
     ],
     [
         'meta',
@@ -29,7 +47,7 @@ export default defineConfig({
         'meta',
         {
             property: 'og:title',
-            content: 'Loxia'
+            content: 'Dartmark'
         }
     ],
     [

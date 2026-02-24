@@ -8,8 +8,9 @@ import { Mapper } from '../benchmarks/benchmarks'
 const myColumns: Column[] = [
   { key: 'name', label: 'Package' },
   { key: 'rps', label: 'RPS', align: 'right', sortable: true, sortDirection: 'desc' },
-  { key: 'stability', label: 'STABILITY', align: 'right', sortable: true, sortDirection: 'asc', },
-  { key: 'latency', label: 'LATENCY', align: 'right', sortable: true, sortDirection: 'asc' }
+  { key: 'stability', label: 'STABILITY', align: 'right', sortable: true, sortDirection: 'desc', },
+  { key: 'latency', label: 'LATENCY', align: 'right', sortable: true, sortDirection: 'asc' },
+  { key: 'coldStart', label: 'COLD START', align: 'right', sortable: true, sortDirection: 'asc' }
 ]
 
 const data = ref<any>([])
@@ -20,6 +21,8 @@ onMounted(() => {
 	for (const record of records) {
 		data.value.push({
 			'name': record.framework,
+			'coldStart': record.coldStartMs,
+			'coldStart_unit': 'ms',
 			'rps': Number(record.rps).toFixed(2),
 			'rps_unit': 'req/s',
 			'latency': Number(record.latency).toFixed(2),
@@ -94,6 +97,11 @@ onMounted(() => {
 				<template #cell-latency="{ record, value }">
 					<span>
 						{{ value }} <span class="text-xs text-muted-foreground">{{ record.latency_unit }}</span>
+					</span>
+				</template>
+				<template #cell-coldStart="{ record, value }">
+					<span>
+						{{ value }} <span class="text-xs text-muted-foreground">{{ record.coldStart_unit }}</span>
 					</span>
 				</template>
 			</Table>

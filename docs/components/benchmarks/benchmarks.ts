@@ -2,7 +2,8 @@ import { data as charts } from '../benchmarks/charts.data'
 
 type HttpResult = {
 	framework: string;
-	endpoint: string
+	endpoint: string;
+	coldStartMs: number;
 	rps: number;
 	p50: number;
 	p95: number;

@@ -17,6 +17,7 @@ const myColumns: Column[] = [
   { key: 'rps', label: 'RPS' },
   { key: 'latency', label: 'Latency' },
   { key: 'stability', label: 'Stability' },
+  { key: 'coldStartMs', label: 'Cold Start' }
 ]
 
 const pkg = ref<HttpPackage | undefined>(undefined)
@@ -29,7 +30,16 @@ onMounted(() => {
 	const packageRecords = records.find((v) => v.framework === (props?.pkg ?? params.value?.pkg))
 	if (packageRecords) {
 		data.value.push(
-			{ 'rps': Number(packageRecords.rps).toFixed(2), 'rps_unit': 'req/s', 'latency_unit': 'ms', 'stability_unit': '%',  'latency': Number(packageRecords.latency).toFixed(2), 'stability': (100 - Number(packageRecords.stability ?? 0)).toFixed(2) },
+			{ 
+				'rps': Number(packageRecords.rps).toFixed(2), 
+				'rps_unit': 'req/s', 
+				'latency_unit': 'ms', 
+				'stability_unit': '%',
+				'coldStartMs': packageRecords.coldStartMs.toFixed(2),
+				'coldStartMs_unit': 'ms',
+				'latency': Number(packageRecords.latency).toFixed(2), 
+				'stability': (100 - Number(packageRecords.stability ?? 0)).toFixed(2) 
+			},
 		)
 	}
 	// const objects: Record<string, any>[] = [
@@ -105,6 +115,11 @@ onMounted(() => {
 				<template #cell-stability="{ record, value }">
 					<span>
 						{{ value }} <span class="text-xs text-muted-foreground">{{ record.stability_unit }}</span>
+					</span>
+				</template>
+				<template #cell-coldStartMs="{ record, value }">
+					<span>
+						{{ value }} <span class="text-xs text-muted-foreground">{{ record.coldStartMs_unit }}</span>
 					</span>
 				</template>
 			</Table>
