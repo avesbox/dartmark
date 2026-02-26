@@ -10,10 +10,12 @@ import 'package:dartmark/src/http_runner.dart';
 class Executor {
   final List<String> validationConfigs;
   final List<String> httpConfigs;
+  final List<String> ormConfigs;
 
   Executor({
     this.validationConfigs = const [],
     this.httpConfigs = const [],
+    this.ormConfigs = const [],
   });
 
   Future<void> execute() async {
@@ -23,7 +25,67 @@ class Executor {
     if (httpConfigs.isNotEmpty) {
       await _runHttp();
     }
+    // if (ormConfigs.isNotEmpty) {
+    //   await _runOrm();
+    // }
   }
+
+  // Future<void> _runOrm() async {
+  //   // Requires an OrmRunner similar to HttpRunner
+  //   final runner = OrmRunner(); 
+  //   final List<Map<String, dynamic>> results = [];
+  //   final File file = File('docs/data/results-orm.json');
+    
+  //   if (file.existsSync()) {
+  //     file.deleteSync();
+  //   }
+  //   file.createSync(recursive: true);
+  //   final libraries = <Map<String, Object?>>[];
+    
+  //   for (final path in ormConfigs) {
+  //     final configFile = File(path);
+  //     if (!configFile.existsSync()) {
+  //       print('ORM config not found at $path, skipping');
+  //       continue;
+  //     }
+      
+  //     // Requires an OrmBenchmarkConfig similar to HttpBenchmarkConfig
+  //     final config = OrmBenchmarkConfig.fromYaml(configFile); 
+      
+  //     libraries.add({
+  //       'framework': config.framework, // or config.name depending on your setup
+  //       'version': config.version ?? 'unknown',
+  //       'description': config.description,
+  //       'publisher': config.publisher,
+  //       'publisherUrl': config.publisherUrl,
+  //       'repository': config.repository,
+  //       'homepage': config.homepage,
+  //       'features': config.features.map((f) => {
+  //         'title': f.title,
+  //         'description': f.description,
+  //       }).toList(),
+  //     });
+      
+  //     print('Starting ORM benchmarks for ${config.framework}...');
+  //     try {
+  //       final result = await runner.run(config);
+  //       results.add(result.toMap());
+  //       print('ORM benchmarks for ${config.framework} completed successfully.');
+  //     } catch (e) {
+  //       print('Error running ORM benchmarks for ${config.framework}: $e');
+  //       rethrow;
+  //     }
+  //   }
+    
+  //   print('All ORM benchmarks completed.');
+  //   file.writeAsStringSync(jsonEncode({
+  //     'results': results,
+  //     'date': DateTime.now().toIso8601String(),
+  //     'dart': Platform.version,
+  //     'packages': libraries,
+  //     'id': 'orm'
+  //   }));
+  // }
 
   Future<void> _runValidation() async {
     final List<Map<String, dynamic>> results = [];

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:shelf/shelf.dart';
@@ -16,8 +17,9 @@ Future<Response> _echoRequest(Request request) async {
     return Response.ok('ok');
   }
 
-  final body = await request.readAsString();
-  return Response.ok(body.isEmpty ? '{}' : body, headers: {
+  final jsonBody = await request.readAsString();
+  final body = jsonDecode(jsonBody.isEmpty ? '{}' : jsonBody);
+  return Response.ok(jsonEncode(body), headers: {
     'Content-Type': 'application/json',
   });
 }
