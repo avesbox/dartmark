@@ -1,0 +1,35 @@
+framework: fletch
+projectPath: frameworks/fletch
+version: 2.1.0
+description: A fast, Express-inspired HTTP framework for Dart. Build production-ready REST APIs with built-in sessions, CORS, rate limiting, and middleware support.
+publisher: mahawarkartikey.in
+publisherUrl: https://mahawarkartikey.in/
+repository: https://github.com/kartikey321/fletch
+homepage: https://docs.fletch.mahawarkartikey.in/
+build:
+  command: dart
+  args: ["compile", "exe", "bin/fletch_bench.dart", "-o", "bin/server.exe"]
+run:
+  command: bin/server.exe
+  env:
+    PORT: 8081
+http:
+  baseUrl: http://127.0.0.1:8081
+  endpoint: /api/echo
+  waitForReady:
+    path: /health
+    timeoutSeconds: 10
+    intervalMillis: 200
+load:
+  warmupSeconds: 3
+  durationSeconds: 15
+  concurrency: 8
+  connections: 0          # unthrottled unless you set it
+  requests: 0             # duration-based
+  timeoutSeconds: 5
+  headers:
+    - "Content-Type: application/json"
+  body: '{"hello":"world"}'
+oha:
+  binaryPath: oha
+  extraArgs: []
