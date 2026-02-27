@@ -11,17 +11,10 @@ There are two benchmark tracks:
 
 To see the benchmarks, you can visit the [website](https://dartmark.dev).
 
-## How to add your library
+## How to add your validation library
 
 Right now Dartmark is focused on validation libraries. If you want to add your library, please create a new folder in the `lib` folder and add your library implementation there, you can follow how the Acanthis library is being implemented. The file name **must** be the same as the library. For example, if your library is called `my_library`, create a file called `my_library.dart` and add your implementation there.
 Remember to also add the name of the library in the `bin/dartmark.dart` file otherwise it won't be run.
-
-### Add a custom file for the website
-
-You can add a custom file for the website in the `docs/packages` folder. The file name **must** be the same as the library. For example, if your library is called `my_library`, create a file called `my_library.md` and add your implementation there. As before you can follow how the Acanthis library is being implemented.
-
-> [!NOTE]
-> Currently we don't support custom logos for the libraries, but it could be added in the future. If you want to add a logo, please create an issue in the repository and we will add it for you.
 
 ## How to add an HTTP framework benchmark
 
@@ -65,7 +58,7 @@ You can add a custom file for the website in the `docs/packages` folder. The fil
 
 ## How the benchmarks are run
 
-The benchmarks are run using the library `tyto` and the command is executed inside a docker container when it is built, this means that the benchmarks are run in a clean environment and the results are not affected by the local environment.
+The validation benchmarks are run using the library `tyto`, while the HTTP benchmarks are run using the `oha` tool. Both of them are run inside a Docker container to ensure consistency across different environments and both of them measure the performance of AOT-compiled code.
 
 ## How to run the benchmarks locally
 
@@ -82,6 +75,3 @@ To see them you can start the website using the following command:
 ```bash
 cd docs && npm install && npm run docs:dev
 ```
-
-> [!NOTE]
-> Right now the website is developed using Vitepress but it is already planned to migrate to Jaspr. If you want to help with the migration, please create an issue in the repository and we will add you to the team.
