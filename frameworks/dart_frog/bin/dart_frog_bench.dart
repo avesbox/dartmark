@@ -17,7 +17,5 @@ Future<Response> _echoRequest(RequestContext context) async {
 
   final jsonBody = await context.request.body();
   final body = jsonDecode(jsonBody.isEmpty ? '{}' : jsonBody);
-  return Response.json(body: body, headers: {
-    'Content-Type': 'application/json',
-  });
+  return Response.json(body: body);
 }
