@@ -7,7 +7,7 @@ Future<void> main(List<String> arguments) async {
   final validationConfigs = _discoverValidationConfigs();
   final ormConfigs = _discoverOrmConfigs();
   final Executor executor = Executor(
-    //validationConfigs: validationConfigs,
+    validationConfigs: validationConfigs,
     httpConfigs: httpConfigs,
     ormConfigs: ormConfigs,
   );
