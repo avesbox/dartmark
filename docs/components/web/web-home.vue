@@ -11,7 +11,8 @@ const myColumns: Column[] = [
   { key: 'rps', label: 'RPS', align: 'right', sortable: true, sortDirection: 'desc' },
   { key: 'stability', label: 'STABILITY', align: 'right', sortable: true, sortDirection: 'desc', },
   { key: 'latency', label: 'LATENCY', align: 'right', sortable: true, sortDirection: 'asc' },
-  { key: 'coldStart', label: 'COLD START', align: 'right', sortable: true, sortDirection: 'asc' }
+  { key: 'coldStart', label: 'COLD START', align: 'right', sortable: true, sortDirection: 'asc' },
+  { key: 'memory', label: 'MEMORY', align: 'right', sortable: true, sortDirection: 'asc' }
 ]
 
 const data = ref<any>([])
@@ -67,7 +68,9 @@ onMounted(() => {
 			'latency_unit': 'ms',
 			'stability_unit': 'x Jitter',
 			'stability': Number(record.stability).toFixed(2),
-			'nameUrl': '/web/' + record.framework
+			'nameUrl': '/web/' + record.framework,
+			'memory': record.memoryUsedBytes ? (record.memoryUsedBytes / (1024 * 1024)).toFixed(2) : 'N/A',
+			'memory_unit': 'MB'
 		})
 	}
 	specs.value = [
@@ -163,6 +166,11 @@ onBeforeUnmount(() => {
 				<template #cell-coldStart="{ record, value }">
 					<span>
 						{{ value }} <span class="text-xs text-muted-foreground">{{ record.coldStart_unit }}</span>
+					</span>
+				</template>
+				<template #cell-memory="{ record, value }">
+					<span>
+						{{ value }} <span class="text-xs text-muted-foreground">{{ record.memory_unit }}</span>
 					</span>
 				</template>
 			</Table>

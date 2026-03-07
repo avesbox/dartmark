@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dartmark/src/http_config.dart';
 
+
 class HttpBenchmarkResult {
   final String framework;
   final int coldStartMs;
@@ -19,6 +20,7 @@ class HttpBenchmarkResult {
   final String? version;
   final Map<String, dynamic> environment;
   final String endpoint;
+  final int memoryUsedBytes;
 
   HttpBenchmarkResult({
     required this.framework,
@@ -36,6 +38,7 @@ class HttpBenchmarkResult {
     required this.version,
     required this.environment,
     required this.endpoint,
+    required this.memoryUsedBytes,
   });
 
   Map<String, dynamic> toMap() => {
@@ -53,6 +56,7 @@ class HttpBenchmarkResult {
         'durationSeconds': durationSeconds,
         'requests': requests,
         'version': version ?? 'unknown',
+        'memoryUsedBytes': memoryUsedBytes,
         ...environment,
       };
 }
@@ -65,7 +69,7 @@ class HttpRunner {
     try {
       final coldStartMs = await _waitForReady(config, coldStartWatch);
       await _warmup(config);
-      return await _execute(config, coldStartMs);
+      return await _execute(config, coldStartMs, server.pid);
     } finally {
       await _stopServer(server, config);
     }
@@ -155,7 +159,7 @@ class HttpRunner {
     );
   }
 
-  Future<HttpBenchmarkResult> _execute(HttpBenchmarkConfig config, int coldStartMs) async {
+  Future<HttpBenchmarkResult> _execute(HttpBenchmarkConfig config, int coldStartMs, int serverPid) async {
     final output = await _runOha(
       config,
       durationSeconds: config.load.durationSeconds,
@@ -165,6 +169,7 @@ class HttpRunner {
 
     final parsed = _parseOhaOutput(output.stdout, output.stderr, output.exitCode);
     final environment = _collectEnvironment();
+    final memoryUsedBytes = await _getProcessMemoryBytes(serverPid);
 
     return HttpBenchmarkResult(
       framework: config.framework,
@@ -182,6 +187,7 @@ class HttpRunner {
       requests: config.load.requests,
       version: config.version,
       environment: environment,
+      memoryUsedBytes: memoryUsedBytes,
     );
   }
 
@@ -273,6 +279,36 @@ class HttpRunner {
     }
 
     Process.killPid(pid, parentSignal);
+  }
+
+  Future<int> _getProcessMemoryBytes(int pid) async {
+    if (Platform.isWindows) {
+      final result = await Process.run(
+        'tasklist', ['/FI', 'PID eq $pid', '/FO', 'CSV', '/NH'],
+      );
+      if (result.exitCode == 0) {
+        final line = (result.stdout as String).trim();
+        final parts = line.split(',');
+        if (parts.length >= 5) {
+          final memStr = parts[4]
+              .replaceAll('"', '')
+              .replaceAll(' K', '')
+              .replaceAll(',', '')
+              .trim();
+          final kb = int.tryParse(memStr);
+          if (kb != null) return kb * 1024;
+        }
+      }
+      return 0;
+    }
+
+    // macOS/Linux: ps returns RSS in KB
+    final result = await Process.run('ps', ['-o', 'rss=', '-p', '$pid']);
+    if (result.exitCode == 0) {
+      final rssKb = int.tryParse((result.stdout as String).trim());
+      if (rssKb != null) return rssKb * 1024;
+    }
+    return 0;
   }
 
   _OhaParsed _parseOhaOutput(String stdout, String stderr, int exitCode) {

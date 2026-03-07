@@ -16,6 +16,7 @@ type HttpResult = {
 	version: string;
 	cpu: string;
 	system: string;
+	memoryUsedBytes: number;
 	memory: string;
 	rpsPercentage: number;
 	stability: number;

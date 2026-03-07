@@ -213,10 +213,10 @@ packages:
     dependency: "direct main"
     description:
       name: relic
-      sha256: cec5026f5748051f8c92bc7c61ba28c6c6277744d4134eff237a4d543209eb6a
+      sha256: f5140ac71f31a71c0dccf05cbce1fa79903736e93d0eff2d97af108449a82545
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "1.1.1"
   relic_core:
     dependency: transitive
     description:

@@ -17,6 +17,7 @@ dependencies:
   yaml: ^3.1.3
   vine: ^1.8.0
   json_schema_builder: ^0.1.3
+  system_resources_2: ^2.2.2
 
 dev_dependencies:
   lints: ^5.0.0

@@ -181,10 +181,10 @@ packages:
     dependency: "direct main"
     description:
       name: serinus
-      sha256: ca5efe67c12bee618cd5763c2b7a6eaa72793e1f7ccd5b9f5a7508819b2f4cbd
+      sha256: caaab0c7b2db8706970b62d9c83377c1baa7c42b9845a390a033255c8cb9c1f6
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.2"
+    version: "2.1.5"
   serinus_lint:
     dependency: "direct dev"
     description:

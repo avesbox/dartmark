@@ -1,1 +1,214 @@
-{"results":[{"framework":"dart_frog","endpoint":"http://127.0.0.1:8081/api/echo","coldStartMs":840,"rps":9444.683233108024,"p50":0.8083,"p95":1.0073,"p99":1.1226999999999998,"latency":0.8447827936593177,"stability":1.1145636850987788,"errors":0,"concurrency":8,"durationSeconds":15,"requests":0,"version":"1.2.6","cpu":"AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD","system":"\"Windows 11 Pro\" 10.0 (Build 26200)","memory":"unknown"},{"framework":"dart_io","endpoint":"http://127.0.0.1:8081/api/echo","coldStartMs":793,"rps":11739.297457060244,"p50":0.6877,"p95":0.7986,"p99":0.8809999999999999,"latency":0.6794362382146584,"stability":1.1031805659904832,"errors":0,"concurrency":8,"durationSeconds":15,"requests":0,"version":"1.0.0","cpu":"AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD","system":"\"Windows 11 Pro\" 10.0 (Build 26200)","memory":"unknown"},{"framework":"relic","endpoint":"http://127.0.0.1:8081/api/echo","coldStartMs":848,"rps":13102.87296178401,"p50":0.5844999999999999,"p95":0.7099,"p99":0.8095,"latency":0.6088981576539955,"stability":1.1403014509085787,"errors":0,"concurrency":8,"durationSeconds":15,"requests":0,"version":"1.1.0","cpu":"AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD","system":"\"Windows 11 Pro\" 10.0 (Build 26200)","memory":"unknown"},{"framework":"serinus","endpoint":"http://127.0.0.1:8081/api/echo","coldStartMs":825,"rps":12455.242430121589,"p50":0.6229,"p95":0.7488,"p99":0.8547,"latency":0.6402025430803816,"stability":1.1414262820512822,"errors":0,"concurrency":8,"durationSeconds":15,"requests":0,"version":"2.1.2","cpu":"AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD","system":"\"Windows 11 Pro\" 10.0 (Build 26200)","memory":"unknown"},{"framework":"shelf","endpoint":"http://127.0.0.1:8081/api/echo","coldStartMs":811,"rps":10094.005782661397,"p50":0.7627,"p95":0.9014,"p99":1.0104,"latency":0.7904332105853668,"stability":1.1209230086532063,"errors":0,"concurrency":8,"durationSeconds":15,"requests":0,"version":"1.4.2","cpu":"AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD","system":"\"Windows 11 Pro\" 10.0 (Build 26200)","memory":"unknown"}],"date":"2026-02-24T20:34:06.641187","dart":"3.11.0 (stable) (Mon Feb 9 00:38:07 2026 -0800) on \"windows_x64\"","packages":[{"framework":"dart_frog","version":"1.2.6","description":"The standard Dart HTTP server implementation, using the `dart:io` library.","publisher":"dart-frog.dev","publisherUrl":"https://dart-frog.dev","repository":"https://github.com/dart-frog-dev/dart_frog","homepage":"https://dart-frog.dev","features":[]},{"framework":"dart_io","version":"1.0.0","description":"The standard Dart HTTP server implementation, using the `dart:io` library.","publisher":"dart.dev","publisherUrl":"https://dart.dev","repository":"https://dart.dev","homepage":"https://dart.dev","features":[]},{"framework":"relic","version":"1.1.0","description":"A lightweight and flexible web server inspired by Shelf for building APIs and backend services.","publisher":"serverpod.dev","publisherUrl":"https://serverpod.dev","repository":"https://github.com/serverpod/relic","homepage":"https://serverpod.dev","features":[]},{"framework":"serinus","version":"2.1.2","description":"Serinus is a framework for building robust and scalable Dart server-side applications. It leverges the power of OOP and the flexibility of Dart to provide a simple and efficient way to build server-side applications.","publisher":"Avesbox","publisherUrl":"https://avesbox.com","repository":"https://github.com/francescovallone/serinus","homepage":"https://serinus.app","features":[{"title":"Just Return","description":"Return anything from handlers: Strings, Maps, Lists, Streams, Files, Futures. Zero boilerplate."},{"title":"Specialized Tools","description":"Hooks, Exception Filters, and Pipes. Full control over your application flow."},{"title":"Real-time Ready","description":"WebSockets and SSE built-in. Push updates instantly with zero config."},{"title":"Universal Adapters","description":"REST APIs, Microservices, and more. Same framework, different adapters."},{"title":"Type-Safe","description":"Leverage Dart's type system. Catch errors at compile time, not runtime."},{"title":"OpenAPI Native","description":"Unique in Dart. Generate complete API docs with just one import."}]},{"framework":"shelf","version":"1.4.2","description":"A model for web server middleware that encourages composition and easy reuse.","publisher":"dart.dev","publisherUrl":"https://dart.dev","repository":"https://github.com/dart-lang/shelf/tree/master/pkgs/shelf","homepage":"https://github.com/dart-lang/shelf/tree/master/pkgs/shelf","features":[]}],"id":"http"}
+{
+    "results": [
+        {
+            "framework": "fletch",
+            "endpoint": "http://127.0.0.1:8081/api/echo",
+            "coldStartMs": 543,
+            "rps": 35821.91888203059,
+            "p50": 0.215875,
+            "p95": 0.250917,
+            "p99": 0.261375,
+            "latency": 0.2225244746817351,
+            "stability": 1.0416791209842298,
+            "errors": 0,
+            "concurrency": 8,
+            "durationSeconds": 15,
+            "requests": 0,
+            "version": "2.1.0",
+            "memoryUsedBytes": 22544384,
+            "cpu": "unknown",
+            "system": "Version 26.2 (Build 25C56)",
+            "memory": "unknown"
+        },
+        {
+            "framework": "relic",
+            "endpoint": "http://127.0.0.1:8081/api/echo",
+            "coldStartMs": 516,
+            "rps": 45478.15516216029,
+            "p50": 0.17216700000000001,
+            "p95": 0.20049999999999998,
+            "p99": 0.209166,
+            "latency": 0.17518203738933139,
+            "stability": 1.0432219451371572,
+            "errors": 0,
+            "concurrency": 8,
+            "durationSeconds": 15,
+            "requests": 0,
+            "version": "1.1.1",
+            "memoryUsedBytes": 53149696,
+            "cpu": "unknown",
+            "system": "Version 26.2 (Build 25C56)",
+            "memory": "unknown"
+        },
+        {
+            "framework": "dart_frog",
+            "endpoint": "http://127.0.0.1:8081/api/echo",
+            "coldStartMs": 525,
+            "rps": 35762.203531745814,
+            "p50": 0.21787499999999999,
+            "p95": 0.24850000000000003,
+            "p99": 0.25437499999999996,
+            "latency": 0.2229034384823661,
+            "stability": 1.0236418511066396,
+            "errors": 0,
+            "concurrency": 8,
+            "durationSeconds": 15,
+            "requests": 0,
+            "version": "1.2.6",
+            "memoryUsedBytes": 20152320,
+            "cpu": "unknown",
+            "system": "Version 26.2 (Build 25C56)",
+            "memory": "unknown"
+        },
+        {
+            "framework": "serinus",
+            "endpoint": "http://127.0.0.1:8081/api/echo",
+            "coldStartMs": 516,
+            "rps": 48430.829448451055,
+            "p50": 0.16020800000000002,
+            "p95": 0.1915,
+            "p99": 0.201584,
+            "latency": 0.16443115220555934,
+            "stability": 1.0526579634464752,
+            "errors": 0,
+            "concurrency": 8,
+            "durationSeconds": 15,
+            "requests": 0,
+            "version": "2.1.5",
+            "memoryUsedBytes": 19988480,
+            "cpu": "unknown",
+            "system": "Version 26.2 (Build 25C56)",
+            "memory": "unknown"
+        },
+        {
+            "framework": "shelf",
+            "endpoint": "http://127.0.0.1:8081/api/echo",
+            "coldStartMs": 517,
+            "rps": 37799.01221555882,
+            "p50": 0.206292,
+            "p95": 0.23558300000000001,
+            "p99": 0.241542,
+            "latency": 0.21085247557128645,
+            "stability": 1.0252946944389025,
+            "errors": 0,
+            "concurrency": 8,
+            "durationSeconds": 15,
+            "requests": 0,
+            "version": "1.4.2",
+            "memoryUsedBytes": 20135936,
+            "cpu": "unknown",
+            "system": "Version 26.2 (Build 25C56)",
+            "memory": "unknown"
+        },
+        {
+            "framework": "dart_io",
+            "endpoint": "http://127.0.0.1:8081/api/echo",
+            "coldStartMs": 530,
+            "rps": 68819.24145917308,
+            "p50": 0.11220799999999999,
+            "p95": 0.140333,
+            "p99": 0.148333,
+            "latency": 0.11560144234132881,
+            "stability": 1.0570072612999082,
+            "errors": 0,
+            "concurrency": 8,
+            "durationSeconds": 15,
+            "requests": 0,
+            "version": "1.0.0",
+            "memoryUsedBytes": 18513920,
+            "cpu": "unknown",
+            "system": "Version 26.2 (Build 25C56)",
+            "memory": "unknown"
+        }
+    ],
+    "date": "2026-03-07T22:32:00.522286",
+    "dart": "3.11.0 (stable) (Mon Feb 9 00:38:07 2026 -0800) on \"macos_arm64\"",
+    "packages": [
+        {
+            "framework": "fletch",
+            "version": "2.1.0",
+            "description": "A fast, Express-inspired HTTP framework for Dart. Build production-ready REST APIs with built-in sessions, CORS, rate limiting, and middleware support.",
+            "publisher": "mahawarkartikey.in",
+            "publisherUrl": "https://mahawarkartikey.in/",
+            "repository": "https://github.com/kartikey321/fletch",
+            "homepage": "https://docs.fletch.mahawarkartikey.in/",
+            "features": []
+        },
+        {
+            "framework": "relic",
+            "version": "1.1.1",
+            "description": "A lightweight and flexible web server inspired by Shelf for building APIs and backend services.",
+            "publisher": "serverpod.dev",
+            "publisherUrl": "https://serverpod.dev",
+            "repository": "https://github.com/serverpod/relic",
+            "homepage": "https://serverpod.dev",
+            "features": []
+        },
+        {
+            "framework": "dart_frog",
+            "version": "1.2.6",
+            "description": "The standard Dart HTTP server implementation, using the `dart:io` library.",
+            "publisher": "dart-frog.dev",
+            "publisherUrl": "https://dart-frog.dev",
+            "repository": "https://github.com/dart-frog-dev/dart_frog",
+            "homepage": "https://dart-frog.dev",
+            "features": []
+        },
+        {
+            "framework": "serinus",
+            "version": "2.1.5",
+            "description": "Serinus is a framework for building robust and scalable Dart server-side applications. It leverges the power of OOP and the flexibility of Dart to provide a simple and efficient way to build server-side applications.",
+            "publisher": "Avesbox",
+            "publisherUrl": "https://avesbox.com",
+            "repository": "https://github.com/francescovallone/serinus",
+            "homepage": "https://serinus.app",
+            "features": [
+                {
+                    "title": "Just Return",
+                    "description": "Return anything from handlers: Strings, Maps, Lists, Streams, Files, Futures. Zero boilerplate."
+                },
+                {
+                    "title": "Specialized Tools",
+                    "description": "Hooks, Exception Filters, and Pipes. Full control over your application flow."
+                },
+                {
+                    "title": "Real-time Ready",
+                    "description": "WebSockets and SSE built-in. Push updates instantly with zero config."
+                },
+                {
+                    "title": "Universal Adapters",
+                    "description": "REST APIs, Microservices, and more. Same framework, different adapters."
+                },
+                {
+                    "title": "Type-Safe",
+                    "description": "Leverage Dart's type system. Catch errors at compile time, not runtime."
+                },
+                {
+                    "title": "OpenAPI Native",
+                    "description": "Unique in Dart. Generate complete API docs with just one import."
+                }
+            ]
+        },
+        {
+            "framework": "shelf",
+            "version": "1.4.2",
+            "description": "A model for web server middleware that encourages composition and easy reuse.",
+            "publisher": "dart.dev",
+            "publisherUrl": "https://dart.dev",
+            "repository": "https://github.com/dart-lang/shelf/tree/master/pkgs/shelf",
+            "homepage": "https://github.com/dart-lang/shelf/tree/master/pkgs/shelf",
+            "features": []
+        },
+        {
+            "framework": "dart_io",
+            "version": "1.0.0",
+            "description": "The standard Dart HTTP server implementation, using the `dart:io` library.",
+            "publisher": "dart.dev",
+            "publisherUrl": "https://dart.dev",
+            "repository": "https://dart.dev",
+            "homepage": "https://dart.dev",
+            "features": []
+        }
+    ],
+    "id": "http"
+}

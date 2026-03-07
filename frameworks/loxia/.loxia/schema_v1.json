@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "tables": {
+    "users": {
+      "columns": {
+        "id": {
+          "type": "int",
+          "nullable": false,
+          "isPrimaryKey": true,
+          "unique": false
+        },
+        "name": {
+          "type": "varchar",
+          "nullable": false,
+          "isPrimaryKey": false,
+          "unique": false
+        }
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@ projectPath: frameworks/relic
 description: A lightweight and flexible web server inspired by Shelf for building APIs and backend services.
 publisher: serverpod.dev
 publisherUrl: https://serverpod.dev
-version: 1.1.0
+version: 1.1.1
 homepage: https://serverpod.dev
 repository: https://github.com/serverpod/relic
 build:
