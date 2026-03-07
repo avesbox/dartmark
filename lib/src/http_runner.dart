@@ -302,12 +302,30 @@ class HttpRunner {
       return 0;
     }
 
-    // macOS/Linux: ps returns RSS in KB
-    final result = await Process.run('ps', ['-o', 'rss=', '-p', '$pid']);
-    if (result.exitCode == 0) {
-      final rssKb = int.tryParse((result.stdout as String).trim());
-      if (rssKb != null) return rssKb * 1024;
+    // Linux: read from /proc (works in Docker without ps)
+    final statmFile = File('/proc/$pid/statm');
+    if (statmFile.existsSync()) {
+      try {
+        final contents = await statmFile.readAsString();
+        final parts = contents.trim().split(' ');
+        if (parts.length >= 2) {
+          final residentPages = int.tryParse(parts[1]);
+          if (residentPages != null) {
+            // Each page is typically 4096 bytes
+            return residentPages * 4096;
+          }
+        }
+      } catch (_) {}
     }
+
+    // macOS / fallback: use ps
+    try {
+      final result = await Process.run('ps', ['-o', 'rss=', '-p', '$pid']);
+      if (result.exitCode == 0) {
+        final rssKb = int.tryParse((result.stdout as String).trim());
+        if (rssKb != null) return rssKb * 1024;
+      }
+    } catch (_) {}
     return 0;
   }
 
