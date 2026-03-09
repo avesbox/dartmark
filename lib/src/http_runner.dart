@@ -446,6 +446,15 @@ class HttpRunner {
     if (p50 == null || p95 == null || p99 == null) {
       throw StateError('Unable to parse oha output.');
     }
+    final scDistribution = json['statusCodeDistribution'] as Map<String, dynamic>;
+    for (final entry in scDistribution.entries) {
+      final code = entry.key;
+      final count = entry.value as int;
+      if (code.startsWith('2') || code.startsWith('3')) {
+        continue;
+      }
+      errors += count;
+    }
 
     return _OhaParsed(
       rps: rps,
