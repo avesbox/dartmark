@@ -20,6 +20,9 @@ type HttpResult = {
 	memory: string;
 	rpsPercentage: number;
 	stability: number;
+	size: number;
+	throughput: number;
+	cpuUtilization: number;
 }
 
 type HttpBenchmarks = {

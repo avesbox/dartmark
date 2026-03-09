@@ -2,7 +2,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { motion } from 'motion-v'
 import { scrollVariants } from '../actions/scroll_variants'
-import Table, { Column } from '../table.vue'
+import StatCard, { StatItem } from '../stat-card.vue'
 import { HttpPackage, Mapper } from '../benchmarks/benchmarks'
 import { useData } from 'vitepress'
 import { QuestionIcon } from '../home/icons'
@@ -14,17 +14,12 @@ const props = defineProps<{
 // params is a Vue ref
 const { params } = useData()
 
-const myColumns: Column[] = [
-  { key: 'rps', label: 'RPS' },
-  { key: 'latency', label: 'Latency' },
-  { key: 'stability', label: 'Stability' },
-  { key: 'coldStartMs', label: 'Cold Start' },
-  { key: 'memory', label: 'Memory' }
-]
-
 const pkg = ref<HttpPackage | undefined>(undefined)
 
-const data = ref<Record<string, any>[]>([])
+const performanceStats = ref<StatItem[]>([])
+const latencyStats = ref<StatItem[]>([])
+const resourceStats = ref<StatItem[]>([])
+
 const iconTrigger = ref<HTMLElement | null>(null)
 const tooltipVisible = ref(false)
 const tooltipPosition = ref({ top: 0, left: 0 })
@@ -66,29 +61,25 @@ onMounted(() => {
 
 	const records = Mapper.instance.backendBenchmarks?.results || []
 	pkg.value = Mapper.instance.backendBenchmarks?.packages.find((p) => p.framework === (props?.pkg ?? params.value?.pkg))
-	const packageRecords = records.find((v) => v.framework === (props?.pkg ?? params.value?.pkg))
-	if (packageRecords) {
-		data.value.push(
-			{ 
-				'rps': Number(packageRecords.rps).toFixed(2), 
-				'rps_unit': 'req/s', 
-				'latency_unit': 'ms', 
-				'stability_unit': 'x Jitter',
-				'coldStartMs': packageRecords.coldStartMs.toFixed(2),
-				'coldStartMs_unit': 'ms',
-				'latency': Number(packageRecords.latency).toFixed(2), 
-				'memory': packageRecords.memoryUsedBytes ? (packageRecords.memoryUsedBytes / (1024 * 1024)).toFixed(2) : 'N/A',
-				'memory_unit': 'MB',
-				'stability': Number(packageRecords.stability ?? 0).toFixed(2) 
-			},
-		)
+	const rec = records.find((v) => v.framework === (props?.pkg ?? params.value?.pkg))
+	if (rec) {
+		performanceStats.value = [
+			{ key: 'rps', label: 'Requests/sec', value: Number(rec.rps).toFixed(2), unit: 'req/s' },
+			{ key: 'coldStart', label: 'Cold Start', value: rec.coldStartMs.toFixed(2), unit: 'ms' },
+			{ key: 'stability', label: 'Stability', value: Number(rec.stability ?? 0).toFixed(2), unit: 'x Jitter' },
+		]
+		latencyStats.value = [
+			{ key: 'latency', label: 'Average', value: Number(rec.latency).toFixed(2), unit: 'ms' },
+			{ key: 'p50', label: 'P50', value: Number(rec.p50).toFixed(2), unit: 'ms' },
+			{ key: 'p95', label: 'P95', value: Number(rec.p95).toFixed(2), unit: 'ms' },
+			{ key: 'p99', label: 'P99', value: Number(rec.p99).toFixed(2), unit: 'ms' },
+		]
+		resourceStats.value = [
+			{ key: 'memory', label: 'Memory', value: rec.memoryUsedBytes ? (rec.memoryUsedBytes / (1024 * 1024)).toFixed(2) : 'N/A', unit: 'MB' },
+			{ key: 'size', label: 'Binary Size', value: rec.size ? (rec.size / (1024 * 1024)).toFixed(2) : 'N/A', unit: 'MB' },
+			{ key: 'cpu', label: 'CPU Utilization', value: rec.cpuUtilization ? Number(rec.cpuUtilization).toFixed(1) : 'N/A', unit: '%' },
+		]
 	}
-	// const objects: Record<string, any>[] = [
-	// 	{ 'rps': packageRecords?.rps ?? 0, unit: 'req/s' },
-	// 	{ 'latency': packageRecords?.latency ?? 0, unit: 'ms' },
-	// 	{ 'stability': packageRecords?.stability ?? 0, unit: '%' },
-	// ]
-	// data.value = objects
 })
 
 onBeforeUnmount(() => {
@@ -144,54 +135,30 @@ onBeforeUnmount(() => {
                   {{ link.label }} →
                 </a>
 			</div>
-			<Table 
-				:columns="myColumns" 
-				:records="data" 
-			>
-				<template #header-stability="{ column }">
-					<div class="relative flex items-center gap-1">
-						{{ column.label }} 
-						<span
-							ref="iconTrigger"
-							class="text-xs text-muted-foreground cursor-help"
-							tabindex="0"
-							aria-label="What does stability mean?"
-							:aria-describedby="tooltipVisible ? tooltipId : undefined"
-							@mouseenter="showTooltip"
-							@mouseleave="hideTooltip"
-							@focus="showTooltip"
-							@blur="hideTooltip"
-						>
-							<QuestionIcon />
-						</span>
-					</div>
-				</template>
-				<template #cell-latency="{ record, value }">
-					<span>
-						{{ value }} <span class="text-xs text-muted-foreground">{{ record.latency_unit }}</span>
-					</span>
-				</template>
-				<template #cell-rps="{ record, value }">
-					<span>
-						{{ value }} <span class="text-xs text-muted-foreground">{{ record.rps_unit }}</span>
-					</span>
-				</template>
-				<template #cell-stability="{ record, value }">
-					<span>
-						{{ value }} <span class="text-xs text-muted-foreground">{{ record.stability_unit }}</span>
-					</span>
-				</template>
-				<template #cell-coldStartMs="{ record, value }">
-					<span>
-						{{ value }} <span class="text-xs text-muted-foreground">{{ record.coldStartMs_unit }}</span>
-					</span>
-				</template>
-				<template #cell-memory="{ record, value }">
-					<span>
-						{{ value }} <span class="text-xs text-muted-foreground">{{ record.memory_unit }}</span>
-					</span>
-				</template>
-			</Table>
+			<div class="grid md:grid-cols-3 gap-4">
+				<StatCard title="Performance" :items="performanceStats">
+					<template #header>
+						<div class="flex items-center gap-1">
+							Performance
+							<span
+								ref="iconTrigger"
+								class="text-xs text-muted-foreground cursor-help"
+								tabindex="0"
+								aria-label="What does stability mean?"
+								:aria-describedby="tooltipVisible ? tooltipId : undefined"
+								@mouseenter="showTooltip"
+								@mouseleave="hideTooltip"
+								@focus="showTooltip"
+								@blur="hideTooltip"
+							>
+								<QuestionIcon />
+							</span>
+						</div>
+					</template>
+				</StatCard>
+				<StatCard title="Latency" :items="latencyStats" />
+				<StatCard title="Resources" :items="resourceStats" />
+			</div>
 			<div class="grid lg:grid-cols-12 gap-8" v-if="(pkg?.features?.length ?? 0) > 0">
 				<motion.div
 					:variants="scrollVariants.slideLeft"

@@ -1,19 +1,54 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { motion } from 'motion-v'
 import { scrollVariants } from '../actions/scroll_variants'
 import Table, { Column } from '../table.vue'
 import { Mapper } from '../benchmarks/benchmarks'
 import { QuestionIcon } from '../home/icons'
 
-const myColumns: Column[] = [
-  { key: 'name', label: 'Package' },
-  { key: 'rps', label: 'RPS', align: 'right', sortable: true, sortDirection: 'desc' },
-  { key: 'stability', label: 'STABILITY', align: 'right', sortable: true, sortDirection: 'desc', },
-  { key: 'latency', label: 'LATENCY', align: 'right', sortable: true, sortDirection: 'asc' },
-  { key: 'coldStart', label: 'COLD START', align: 'right', sortable: true, sortDirection: 'asc' },
-  { key: 'memory', label: 'MEMORY', align: 'right', sortable: true, sortDirection: 'asc' }
+interface ToggleableColumn extends Column {
+  default?: boolean
+}
+
+const allColumns: ToggleableColumn[] = [
+  { key: 'name', label: 'Package', default: true },
+  { key: 'rps', label: 'RPS', align: 'right', sortable: true, sortDirection: 'desc', default: true },
+  { key: 'stability', label: 'STABILITY', align: 'right', sortable: true, sortDirection: 'desc', default: true },
+  { key: 'latency', label: 'LATENCY', align: 'right', sortable: true, sortDirection: 'asc', default: true },
+  { key: 'tailLatency', label: 'P99', align: 'right', sortable: true, sortDirection: 'asc' },
+  { key: 'throughput', label: 'THROUGHPUT', align: 'right', sortable: true, sortDirection: 'desc' },
+  { key: 'coldStart', label: 'COLD START', align: 'right', sortable: true, sortDirection: 'asc', default: true },
+  { key: 'memory', label: 'MEMORY', align: 'right', sortable: true, sortDirection: 'asc', default: true },
+  { key: 'size', label: 'BINARY SIZE', align: 'right', sortable: true, sortDirection: 'asc', default: true },
 ]
+
+const visibleKeys = ref<Set<string>>(new Set(allColumns.filter(c => c.default).map(c => c.key)))
+const columnDropdownOpen = ref(false)
+const columnDropdownRef = ref<HTMLElement | null>(null)
+
+const myColumns = computed<Column[]>(() =>
+  allColumns.filter(c => visibleKeys.value.has(c.key))
+)
+
+const optionalColumns = computed(() =>
+  allColumns.filter(c => c.key !== 'name')
+)
+
+const toggleColumn = (key: string) => {
+  const next = new Set(visibleKeys.value)
+  if (next.has(key)) {
+    next.delete(key)
+  } else {
+    next.add(key)
+  }
+  visibleKeys.value = next
+}
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (columnDropdownRef.value && !columnDropdownRef.value.contains(event.target as Node)) {
+    columnDropdownOpen.value = false
+  }
+}
 
 const data = ref<any>([])
 const specs = ref<any>([])
@@ -55,6 +90,7 @@ const syncTooltipPosition = () => {
 onMounted(() => {
 	window.addEventListener('scroll', syncTooltipPosition, true)
 	window.addEventListener('resize', syncTooltipPosition)
+	document.addEventListener('click', handleClickOutside)
 
 	const records = Mapper.instance.backendBenchmarks?.results || []
 	for (const record of records) {
@@ -66,11 +102,23 @@ onMounted(() => {
 			'rps_unit': 'req/s',
 			'latency': Number(record.latency).toFixed(2),
 			'latency_unit': 'ms',
+			'p50': Number(record.p50).toFixed(2),
+			'p50_unit': 'ms',
+			'p95': Number(record.p95).toFixed(2),
+			'p95_unit': 'ms',
+			'tailLatency': Number(record.p99).toFixed(2),
+			'tailLatency_unit': 'ms',
 			'stability_unit': 'x Jitter',
 			'stability': Number(record.stability).toFixed(2),
 			'nameUrl': '/web/' + record.framework,
 			'memory': record.memoryUsedBytes ? (record.memoryUsedBytes / (1024 * 1024)).toFixed(2) : 'N/A',
-			'memory_unit': 'MB'
+			'memory_unit': 'MB',
+			'size': record.size ? (record.size / (1024 * 1024)).toFixed(2) : 'N/A',
+			'size_unit': 'MB',
+			'errors': record.errors ?? 0,
+			'concurrency': record.concurrency ?? 'N/A',
+			'throughput': record.throughput ? (record.throughput / (1024 * 1024)).toFixed(2) : 'N/A',
+			'throughput_unit': 'MB/s',
 		})
 	}
 	specs.value = [
@@ -86,6 +134,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	window.removeEventListener('scroll', syncTooltipPosition, true)
 	window.removeEventListener('resize', syncTooltipPosition)
+	document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
@@ -116,6 +165,41 @@ onBeforeUnmount(() => {
 						This benchmark tests how fast a framework can perform concurrent HTTP requests and JSON serialization.
 					</p>
 				</motion.div>
+			</div>
+			<div class="flex justify-end mb-4">
+				<div ref="columnDropdownRef" class="relative">
+					<button
+						@click="columnDropdownOpen = !columnDropdownOpen"
+						class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium border border-border rounded-md bg-background text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+						Columns
+						<svg
+							:class="['h-3.5 w-3.5 transition-transform', columnDropdownOpen ? 'rotate-180' : '']"
+							xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+						>
+							<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.584l3.71-4.354a.75.75 0 111.14.976l-4.25 5a.75.75 0 01-1.14 0l-4.25-5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+						</svg>
+					</button>
+					<div
+						v-if="columnDropdownOpen"
+						class="absolute right-0 mt-1.5 w-48 max-h-64 overflow-y-auto rounded-md border border-border bg-background shadow-lg z-30"
+					>
+						<label
+							v-for="col in optionalColumns"
+							:key="col.key"
+							class="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer hover:bg-muted/50 transition-colors"
+						>
+							<input
+								type="checkbox"
+								:checked="visibleKeys.has(col.key)"
+								@change="toggleColumn(col.key)"
+								class="rounded border-border accent-primary"
+							/>
+							<span class="text-foreground">{{ col.label }}</span>
+						</label>
+					</div>
+				</div>
 			</div>
 			<Table 
 				:columns="myColumns" 
@@ -163,14 +247,39 @@ onBeforeUnmount(() => {
 						{{ value }} <span class="text-xs text-muted-foreground">{{ record.latency_unit }}</span>
 					</span>
 				</template>
+				<template #cell-p50="{ record, value }">
+					<span>
+						{{ value }} <span class="text-xs text-muted-foreground">{{ record.p50_unit }}</span>
+					</span>
+				</template>
+				<template #cell-p95="{ record, value }">
+					<span>
+						{{ value }} <span class="text-xs text-muted-foreground">{{ record.p95_unit }}</span>
+					</span>
+				</template>
+				<template #cell-tailLatency="{ record, value }">
+					<span>
+						{{ value }} <span class="text-xs text-muted-foreground">{{ record.tailLatency_unit }}</span>
+					</span>
+				</template>
 				<template #cell-coldStart="{ record, value }">
 					<span>
 						{{ value }} <span class="text-xs text-muted-foreground">{{ record.coldStart_unit }}</span>
 					</span>
 				</template>
+				<template #cell-throughput="{ record, value }">
+					<span>
+						{{ value }} <span class="text-xs text-muted-foreground">{{ record.throughput_unit }}</span>
+					</span>
+				</template>
 				<template #cell-memory="{ record, value }">
 					<span>
 						{{ value }} <span class="text-xs text-muted-foreground">{{ record.memory_unit }}</span>
+					</span>
+				</template>
+				<template #cell-size="{ record, value }">
+					<span>
+						{{ value }} <span class="text-xs text-muted-foreground">{{ record.size_unit }}</span>
 					</span>
 				</template>
 			</Table>

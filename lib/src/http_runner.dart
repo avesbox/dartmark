@@ -20,6 +20,9 @@ class HttpBenchmarkResult {
   final String? version;
   final Map<String, dynamic> environment;
   final String endpoint;
+  final int size;
+  final double cpuUtilization;
+  final double throughput;
   final int memoryUsedBytes;
 
   HttpBenchmarkResult({
@@ -39,6 +42,9 @@ class HttpBenchmarkResult {
     required this.environment,
     required this.endpoint,
     required this.memoryUsedBytes,
+    required this.size,
+    required this.cpuUtilization,
+    required this.throughput,
   });
 
   Map<String, dynamic> toMap() => {
@@ -54,28 +60,31 @@ class HttpBenchmarkResult {
         'errors': errors,
         'concurrency': concurrency,
         'durationSeconds': durationSeconds,
+        'cpuUtilization': cpuUtilization,
         'requests': requests,
         'version': version ?? 'unknown',
+        'throughput': throughput,
         'memoryUsedBytes': memoryUsedBytes,
+        'size': size,
         ...environment,
       };
 }
 
 class HttpRunner {
   Future<HttpBenchmarkResult> run(HttpBenchmarkConfig config) async {
-    await _build(config);
+    final buildSize = await _build(config);
     final coldStartWatch = Stopwatch()..start();
     final server = await _startServer(config);
     try {
       final coldStartMs = await _waitForReady(config, coldStartWatch);
       await _warmup(config);
-      return await _execute(config, coldStartMs, server.pid);
+      return await _execute(config, coldStartMs, server.pid, buildSize);
     } finally {
       await _stopServer(server, config);
     }
   }
 
-  Future<void> _build(HttpBenchmarkConfig config) async {
+  Future<int> _build(HttpBenchmarkConfig config) async {
     final pubGet = await Process.run(
       'dart',
       ['pub', 'get'],
@@ -94,6 +103,11 @@ class HttpRunner {
     if (result.exitCode != 0) {
       throw StateError('Build failed: ${result.stderr}');
     }
+    final compiledFile = File('${config.projectPath}/${config.run.command}'.replaceAll('/', Platform.pathSeparator));
+    if (!compiledFile.existsSync()) {
+      throw StateError('Expected compiled server executable not found at: ${compiledFile.path}');
+    }
+    return compiledFile.length();
   }
 
   Future<Process> _startServer(HttpBenchmarkConfig config) async {
@@ -159,7 +173,10 @@ class HttpRunner {
     );
   }
 
-  Future<HttpBenchmarkResult> _execute(HttpBenchmarkConfig config, int coldStartMs, int serverPid) async {
+  Future<HttpBenchmarkResult> _execute(HttpBenchmarkConfig config, int coldStartMs, int serverPid, int buildSize) async {
+    final cpuBefore = await _getProcessCpuTicks(serverPid);
+    final wallBefore = DateTime.now();
+
     final output = await _runOha(
       config,
       durationSeconds: config.load.durationSeconds,
@@ -167,9 +184,19 @@ class HttpRunner {
       label: 'main',
     );
 
+    final cpuAfter = await _getProcessCpuTicks(serverPid);
+    final wallAfter = DateTime.now();
+
     final parsed = _parseOhaOutput(output.stdout, output.stderr, output.exitCode);
     final environment = _collectEnvironment();
     final memoryUsedBytes = await _getProcessMemoryBytes(serverPid);
+
+    final wallElapsedMs = wallAfter.difference(wallBefore).inMilliseconds;
+    double cpuUtilization = 0.0;
+    if (cpuBefore != null && cpuAfter != null && wallElapsedMs > 0) {
+      final cpuMs = cpuAfter - cpuBefore;
+      cpuUtilization = (cpuMs / wallElapsedMs) * 100.0;
+    }
 
     return HttpBenchmarkResult(
       framework: config.framework,
@@ -188,6 +215,9 @@ class HttpRunner {
       version: config.version,
       environment: environment,
       memoryUsedBytes: memoryUsedBytes,
+      size: buildSize,
+      throughput: parsed.throughput,
+      cpuUtilization: double.parse(cpuUtilization.toStringAsFixed(2)),
     );
   }
 
@@ -281,6 +311,75 @@ class HttpRunner {
     Process.killPid(pid, parentSignal);
   }
 
+  /// Returns total CPU time (user + system) in milliseconds for [pid],
+  /// or null if it cannot be determined.
+  Future<double?> _getProcessCpuTicks(int pid) async {
+    // Linux / Docker: read /proc/<pid>/stat
+    final statFile = File('/proc/$pid/stat');
+    if (statFile.existsSync()) {
+      try {
+        final contents = await statFile.readAsString();
+        // Fields after the comm (which may contain spaces/parens):
+        // Index 0 = pid, 1 = (comm), 2 = state, ..., 13 = utime, 14 = stime
+        final closeParen = contents.lastIndexOf(')');
+        if (closeParen != -1) {
+          final fields = contents.substring(closeParen + 2).trim().split(' ');
+          // fields[11] = utime (index 13 in full stat), fields[12] = stime (index 14)
+          if (fields.length > 12) {
+            final utime = int.tryParse(fields[11]);
+            final stime = int.tryParse(fields[12]);
+            if (utime != null && stime != null) {
+              // Convert clock ticks to milliseconds (clock ticks = sysconf(_SC_CLK_TCK), typically 100)
+              return (utime + stime) * (1000 / 100);
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    // macOS / fallback: ps reports cumulative CPU time as [[dd-]hh:]mm:ss.ss
+    try {
+      final result = await Process.run('ps', ['-o', 'cputime=', '-p', '$pid']);
+      if (result.exitCode == 0) {
+        final raw = (result.stdout as String).trim();
+        return _parsePsCpuTime(raw);
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  /// Parses ps cputime format [[dd-]hh:]mm:ss[.ss] into milliseconds.
+  double? _parsePsCpuTime(String raw) {
+    if (raw.isEmpty) return null;
+    double days = 0;
+    var rest = raw;
+
+    // Handle dd- prefix
+    if (rest.contains('-')) {
+      final parts = rest.split('-');
+      days = double.tryParse(parts[0]) ?? 0;
+      rest = parts[1];
+    }
+
+    final segments = rest.split(':');
+    if (segments.length < 2) return null;
+
+    double hours = 0;
+    double minutes = 0;
+    double seconds = 0;
+
+    if (segments.length == 3) {
+      hours = double.tryParse(segments[0]) ?? 0;
+      minutes = double.tryParse(segments[1]) ?? 0;
+      seconds = double.tryParse(segments[2]) ?? 0;
+    } else {
+      minutes = double.tryParse(segments[0]) ?? 0;
+      seconds = double.tryParse(segments[1]) ?? 0;
+    }
+
+    return ((days * 86400) + (hours * 3600) + (minutes * 60) + seconds) * 1000;
+  }
+
   Future<int> _getProcessMemoryBytes(int pid) async {
     if (Platform.isWindows) {
       final result = await Process.run(
@@ -338,6 +437,7 @@ class HttpRunner {
     final json = jsonDecode(stdout) as Map<String, dynamic>;
     final summary = json['summary'] as Map<String, dynamic>;
     rps = (summary['requestsPerSec'] as num).toDouble();
+    final throughput = summary['sizePerSec'] as num;
     final latencies = json['latencyPercentiles'] as Map<String, dynamic>;
     p50 = latencies['p50'];
     p95 = latencies['p95'];
@@ -355,6 +455,7 @@ class HttpRunner {
       stability: p99/p95,
       p99: p99,
       errors: errors,
+      throughput: throughput.toDouble()
     );
   }
 
@@ -384,6 +485,7 @@ class _OhaParsed {
   final double latency;
   final double stability;
   final int errors;
+  final double throughput;
 
   _OhaParsed({
     required this.rps,
@@ -393,5 +495,6 @@ class _OhaParsed {
     required this.latency,
     required this.stability,
     required this.errors,
+    required this.throughput,
   });
 }
