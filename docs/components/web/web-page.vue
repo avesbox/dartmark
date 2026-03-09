@@ -16,9 +16,7 @@ const { params } = useData()
 
 const pkg = ref<HttpPackage | undefined>(undefined)
 
-const performanceStats = ref<StatItem[]>([])
-const latencyStats = ref<StatItem[]>([])
-const resourceStats = ref<StatItem[]>([])
+const stats = ref<StatItem[]>([])
 
 const iconTrigger = ref<HTMLElement | null>(null)
 const tooltipVisible = ref(false)
@@ -63,21 +61,16 @@ onMounted(() => {
 	pkg.value = Mapper.instance.backendBenchmarks?.packages.find((p) => p.framework === (props?.pkg ?? params.value?.pkg))
 	const rec = records.find((v) => v.framework === (props?.pkg ?? params.value?.pkg))
 	if (rec) {
-		performanceStats.value = [
+		stats.value = [
 			{ key: 'rps', label: 'Requests/sec', value: Number(rec.rps).toFixed(2), unit: 'req/s' },
 			{ key: 'coldStart', label: 'Cold Start', value: rec.coldStartMs.toFixed(2), unit: 'ms' },
-			{ key: 'stability', label: 'Stability', value: Number(rec.stability ?? 0).toFixed(2), unit: 'x Jitter' },
-		]
-		latencyStats.value = [
+			{ key: 'stability', label: 'Stability', value: Number(rec.stability ?? 0).toFixed(2), unit: 'x Jitter', description: 'Stability is calculated as the ratio of P50 latency to P99 latency. A value closer to 1 indicates more consistent performance under load.' },
 			{ key: 'latency', label: 'Average', value: Number(rec.latency).toFixed(2), unit: 'ms' },
 			{ key: 'p50', label: 'P50', value: Number(rec.p50).toFixed(2), unit: 'ms' },
 			{ key: 'p95', label: 'P95', value: Number(rec.p95).toFixed(2), unit: 'ms' },
 			{ key: 'p99', label: 'P99', value: Number(rec.p99).toFixed(2), unit: 'ms' },
-		]
-		resourceStats.value = [
 			{ key: 'memory', label: 'Memory', value: rec.memoryUsedBytes ? (rec.memoryUsedBytes / (1024 * 1024)).toFixed(2) : 'N/A', unit: 'MB' },
 			{ key: 'size', label: 'Binary Size', value: rec.size ? (rec.size / (1024 * 1024)).toFixed(2) : 'N/A', unit: 'MB' },
-			{ key: 'cpu', label: 'CPU Utilization', value: rec.cpuUtilization ? Number(rec.cpuUtilization).toFixed(1) : 'N/A', unit: '%' },
 		]
 	}
 })
@@ -136,28 +129,14 @@ onBeforeUnmount(() => {
                 </a>
 			</div>
 			<div class="grid md:grid-cols-3 gap-4">
-				<StatCard title="Performance" :items="performanceStats">
-					<template #header>
-						<div class="flex items-center gap-1">
-							Performance
-							<span
-								ref="iconTrigger"
-								class="text-xs text-muted-foreground cursor-help"
-								tabindex="0"
-								aria-label="What does stability mean?"
-								:aria-describedby="tooltipVisible ? tooltipId : undefined"
-								@mouseenter="showTooltip"
-								@mouseleave="hideTooltip"
-								@focus="showTooltip"
-								@blur="hideTooltip"
-							>
-								<QuestionIcon />
-							</span>
-						</div>
-					</template>
-				</StatCard>
-				<StatCard title="Latency" :items="latencyStats" />
-				<StatCard title="Resources" :items="resourceStats" />
+				<StatCard
+					v-for="stat in stats"
+					:key="stat.key"
+					:label="stat.label"
+					:value="stat.value"
+					:unit="stat.unit"
+					:description="stat.description"
+				/>
 			</div>
 			<div class="grid lg:grid-cols-12 gap-8" v-if="(pkg?.features?.length ?? 0) > 0">
 				<motion.div
