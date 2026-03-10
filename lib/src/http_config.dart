@@ -81,6 +81,7 @@ class HttpLoadConfig {
   final int warmupSeconds;
   final int durationSeconds;
   final int concurrency;
+  final List<int> concurrencyLevels;
   final int connections;
   final int? requests;
   final int timeoutSeconds;
@@ -91,6 +92,7 @@ class HttpLoadConfig {
     required this.warmupSeconds,
     required this.durationSeconds,
     required this.concurrency,
+    required this.concurrencyLevels,
     required this.connections,
     required this.requests,
     required this.timeoutSeconds,
@@ -98,11 +100,51 @@ class HttpLoadConfig {
     required this.body,
   });
 
+  HttpLoadConfig copyWith({
+    int? warmupSeconds,
+    int? durationSeconds,
+    int? concurrency,
+    List<int>? concurrencyLevels,
+    int? connections,
+    int? requests,
+    int? timeoutSeconds,
+    List<String>? headers,
+    String? body,
+  }) {
+    return HttpLoadConfig(
+      warmupSeconds: warmupSeconds ?? this.warmupSeconds,
+      durationSeconds: durationSeconds ?? this.durationSeconds,
+      concurrency: concurrency ?? this.concurrency,
+      concurrencyLevels: concurrencyLevels ?? this.concurrencyLevels,
+      connections: connections ?? this.connections,
+      requests: requests ?? this.requests,
+      timeoutSeconds: timeoutSeconds ?? this.timeoutSeconds,
+      headers: headers ?? this.headers,
+      body: body ?? this.body,
+    );
+  }
+
   factory HttpLoadConfig.fromYaml(YamlMap map) {
+    final concurrency = (map['concurrency'] as num?)?.toInt() ?? 64;
+    final configuredLevels = (map['concurrencyLevels'] as YamlList?)
+            ?.cast<num>()
+            .map((value) => value.toInt())
+            .where((value) => value > 0)
+            .toList() ??
+        <int>[];
+    final concurrencyLevels = {
+      concurrency,
+      32,
+      128,
+      ...configuredLevels,
+    }.where((value) => value > 0).toList()
+      ..sort();
+
     return HttpLoadConfig(
       warmupSeconds: (map['warmupSeconds'] as num?)?.toInt() ?? 5,
       durationSeconds: (map['durationSeconds'] as num?)?.toInt() ?? 20,
-      concurrency: (map['concurrency'] as num?)?.toInt() ?? 64,
+      concurrency: concurrency,
+      concurrencyLevels: concurrencyLevels,
       connections: (map['connections'] as num?)?.toInt() ?? 0,
       requests: (map['requests'] as num?)?.toInt(),
       timeoutSeconds: (map['timeoutSeconds'] as num?)?.toInt() ?? 5,
@@ -158,6 +200,40 @@ class HttpBenchmarkConfig {
     this.features = const [],
     this.version,
   });
+
+  HttpBenchmarkConfig copyWith({
+    String? framework,
+    String? description,
+    String? publisher,
+    String? publisherUrl,
+    String? repository,
+    String? homepage,
+    String? projectPath,
+    List<ConfigFeature>? features,
+    HttpBuildConfig? build,
+    HttpRunConfig? run,
+    HttpConfig? http,
+    HttpLoadConfig? load,
+    OhaConfig? oha,
+    String? version,
+  }) {
+    return HttpBenchmarkConfig(
+      framework: framework ?? this.framework,
+      projectPath: projectPath ?? this.projectPath,
+      description: description ?? this.description,
+      publisher: publisher ?? this.publisher,
+      publisherUrl: publisherUrl ?? this.publisherUrl,
+      repository: repository ?? this.repository,
+      homepage: homepage ?? this.homepage,
+      build: build ?? this.build,
+      run: run ?? this.run,
+      http: http ?? this.http,
+      load: load ?? this.load,
+      oha: oha ?? this.oha,
+      features: features ?? this.features,
+      version: version ?? this.version,
+    );
+  }
 
   factory HttpBenchmarkConfig.fromYaml(File file) {
     final content = file.readAsStringSync();

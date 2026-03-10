@@ -195,8 +195,10 @@ class HttpRunner {
     double cpuUtilization = 0.0;
     if (cpuBefore != null && cpuAfter != null && wallElapsedMs > 0) {
       final cpuMs = cpuAfter - cpuBefore;
-      cpuUtilization = (cpuMs / wallElapsedMs) * 100.0;
+      final normalizedWallMs = wallElapsedMs * Platform.numberOfProcessors;
+      cpuUtilization = (cpuMs / normalizedWallMs) * 100.0;
     }
+    cpuUtilization = cpuUtilization.clamp(0, 100).toDouble();
 
     return HttpBenchmarkResult(
       framework: config.framework,
@@ -472,6 +474,7 @@ class HttpRunner {
   Map<String, dynamic> _collectEnvironment() {
     return {
       'cpu': Platform.environment['PROCESSOR_IDENTIFIER'] ?? 'unknown',
+      'logicalProcessors': Platform.numberOfProcessors,
       'system': Platform.operatingSystemVersion,
       'memory': Platform.environment['MEMORY'] ?? 'unknown',
     };

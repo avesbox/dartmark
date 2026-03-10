@@ -17,6 +17,10 @@ const { params } = useData()
 const pkg = ref<HttpPackage | undefined>(undefined)
 
 const stats = ref<StatItem[]>([])
+const availableConcurrencies = ref<number[]>([])
+const selectedConcurrency = ref<number | null>(null)
+const concurrencyDropdownOpen = ref(false)
+const concurrencyDropdownRef = ref<HTMLElement | null>(null)
 
 const iconTrigger = ref<HTMLElement | null>(null)
 const tooltipVisible = ref(false)
@@ -53,31 +57,59 @@ const syncTooltipPosition = () => {
 	updateTooltipPosition()
 }
 
+const updateStats = () => {
+	const records = Mapper.instance.backendBenchmarks?.results || []
+	const targetFramework = props?.pkg ?? params.value?.pkg
+	const rec = records.find(
+		(v) => v.framework === targetFramework && v.concurrency === selectedConcurrency.value,
+	)
+
+	if (!rec) {
+		stats.value = []
+		return
+	}
+
+	stats.value = [
+		{ key: 'rps', label: 'Requests/sec', value: Number(rec.rps).toFixed(2), unit: 'req/s' },
+		{ key: 'coldStart', label: 'Cold Start', value: rec.coldStartMs.toFixed(2), unit: 'ms' },
+		{ key: 'stability', label: 'Stability', value: Number(rec.stability ?? 0).toFixed(2), unit: 'x Jitter', description: `Normalized under concurrency ${selectedConcurrency.value}. Stability is the ratio of P95 latency to P99 latency. A value closer to 1 indicates more consistent performance under load.` },
+		{ key: 'latency', label: 'Average', value: Number(rec.latency).toFixed(2), unit: 'ms' },
+		{ key: 'p50', label: 'P50', value: Number(rec.p50).toFixed(2), unit: 'ms' },
+		{ key: 'p95', label: 'P95', value: Number(rec.p95).toFixed(2), unit: 'ms' },
+		{ key: 'p99', label: 'P99', value: Number(rec.p99).toFixed(2), unit: 'ms' },
+		{ key: 'memory', label: 'Memory', value: rec.memoryUsedBytes ? (rec.memoryUsedBytes / (1024 * 1024)).toFixed(2) : 'N/A', unit: 'MB' },
+		{ key: 'size', label: 'Binary Size', value: rec.size ? (rec.size / (1024 * 1024)).toFixed(2) : 'N/A', unit: 'MB' },
+		{ key: 'throughput', label: 'Throughput', value: rec.throughput ? (rec.throughput / (1024 * 1024)).toFixed(2) : 'N/A', unit: 'MB/s' },
+		{ key: 'cpuUtilization', label: 'CPU Utilization', value: Number(rec.cpuUtilization ?? 0).toFixed(2), unit: '%', description: `Share of total host CPU capacity used by the server process during the benchmark. 100% means all ${rec.logicalProcessors ?? 'available'} logical CPUs were fully saturated.` },
+	]
+}
+
+const handleClickOutside = (event: MouseEvent) => {
+	if (concurrencyDropdownRef.value && !concurrencyDropdownRef.value.contains(event.target as Node)) {
+		concurrencyDropdownOpen.value = false
+	}
+}
+
 onMounted(() => {
 	window.addEventListener('scroll', syncTooltipPosition, true)
 	window.addEventListener('resize', syncTooltipPosition)
+	document.addEventListener('click', handleClickOutside)
 
 	const records = Mapper.instance.backendBenchmarks?.results || []
 	pkg.value = Mapper.instance.backendBenchmarks?.packages.find((p) => p.framework === (props?.pkg ?? params.value?.pkg))
-	const rec = records.find((v) => v.framework === (props?.pkg ?? params.value?.pkg))
-	if (rec) {
-		stats.value = [
-			{ key: 'rps', label: 'Requests/sec', value: Number(rec.rps).toFixed(2), unit: 'req/s' },
-			{ key: 'coldStart', label: 'Cold Start', value: rec.coldStartMs.toFixed(2), unit: 'ms' },
-			{ key: 'stability', label: 'Stability', value: Number(rec.stability ?? 0).toFixed(2), unit: 'x Jitter', description: 'Stability is calculated as the ratio of P50 latency to P99 latency. A value closer to 1 indicates more consistent performance under load.' },
-			{ key: 'latency', label: 'Average', value: Number(rec.latency).toFixed(2), unit: 'ms' },
-			{ key: 'p50', label: 'P50', value: Number(rec.p50).toFixed(2), unit: 'ms' },
-			{ key: 'p95', label: 'P95', value: Number(rec.p95).toFixed(2), unit: 'ms' },
-			{ key: 'p99', label: 'P99', value: Number(rec.p99).toFixed(2), unit: 'ms' },
-			{ key: 'memory', label: 'Memory', value: rec.memoryUsedBytes ? (rec.memoryUsedBytes / (1024 * 1024)).toFixed(2) : 'N/A', unit: 'MB' },
-			{ key: 'size', label: 'Binary Size', value: rec.size ? (rec.size / (1024 * 1024)).toFixed(2) : 'N/A', unit: 'MB' },
-		]
-	}
+	availableConcurrencies.value = [...new Set(
+		records
+			.filter((v) => v.framework === (props?.pkg ?? params.value?.pkg))
+			.map((v) => v.concurrency),
+	)].sort((a, b) => a - b)
+	selectedConcurrency.value = availableConcurrencies.value[0] ?? null
+	updateStats()
 })
 
 onBeforeUnmount(() => {
 	window.removeEventListener('scroll', syncTooltipPosition, true)
 	window.removeEventListener('resize', syncTooltipPosition)
+	document.removeEventListener('click', handleClickOutside)
 })
 
 </script>
@@ -128,15 +160,48 @@ onBeforeUnmount(() => {
                   {{ link.label }} →
                 </a>
 			</div>
-			<div class="grid md:grid-cols-3 gap-4">
-				<StatCard
-					v-for="stat in stats"
-					:key="stat.key"
-					:label="stat.label"
-					:value="stat.value"
-					:unit="stat.unit"
-					:description="stat.description"
-				/>
+			<div class="flex flex-col gap-4">
+				<div class="flex justify-end">
+					<div ref="concurrencyDropdownRef" class="relative">
+						<button
+							@click="concurrencyDropdownOpen = !concurrencyDropdownOpen"
+							class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium border border-border rounded-md bg-background text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+						>
+							Concurrency: {{ selectedConcurrency ?? 'N/A' }}
+							<svg
+								:class="['h-3.5 w-3.5 transition-transform', concurrencyDropdownOpen ? 'rotate-180' : '']"
+								xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+							>
+								<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.584l3.71-4.354a.75.75 0 111.14.976l-4.25 5a.75.75 0 01-1.14 0l-4.25-5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+							</svg>
+						</button>
+						<div
+							v-if="concurrencyDropdownOpen"
+							class="absolute flex flex-col gap-2 right-0 mt-1.5 p-2 w-48 overflow-hidden rounded-md border border-border bg-background shadow-lg z-30"
+						>
+							<button
+								v-for="concurrency in availableConcurrencies"
+								:key="concurrency"
+								type="button"
+								class="flex w-full items-center justify-between px-3 py-2 text-xs hover:bg-muted/50 transition-colors"
+								@click="selectedConcurrency = concurrency; concurrencyDropdownOpen = false; updateStats()"
+							>
+								<span>Concurrency {{ concurrency }}</span>
+								<span v-if="selectedConcurrency === concurrency">✓</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="grid md:grid-cols-3 gap-4">
+					<StatCard
+						v-for="stat in stats"
+						:key="stat.key"
+						:label="stat.label"
+						:value="stat.value"
+						:unit="stat.unit"
+						:description="stat.description"
+					/>
+				</div>
 			</div>
 			<div class="grid lg:grid-cols-12 gap-8" v-if="(pkg?.features?.length ?? 0) > 0">
 				<motion.div
@@ -196,5 +261,8 @@ onBeforeUnmount(() => {
 	.text-foreground a {
 		color: hsl(var(--foreground)) !important;
 		text-decoration: underline;
+	}
+	.border-border {
+		border-color: hsl(var(--border));
 	}
 </style>

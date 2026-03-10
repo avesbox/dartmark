@@ -16,6 +16,7 @@ const allColumns: ToggleableColumn[] = [
   { key: 'stability', label: 'STABILITY', align: 'right', sortable: true, sortDirection: 'desc', default: true },
   { key: 'latency', label: 'LATENCY', align: 'right', sortable: true, sortDirection: 'asc', default: true },
   { key: 'tailLatency', label: 'P99', align: 'right', sortable: true, sortDirection: 'asc' },
+	{ key: 'cpuUtilization', label: 'CPU', align: 'right', sortable: true, sortDirection: 'desc' },
   { key: 'throughput', label: 'THROUGHPUT', align: 'right', sortable: true, sortDirection: 'desc' },
   { key: 'coldStart', label: 'COLD START', align: 'right', sortable: true, sortDirection: 'asc', default: true },
   { key: 'memory', label: 'MEMORY', align: 'right', sortable: true, sortDirection: 'asc', default: true },
@@ -23,12 +24,30 @@ const allColumns: ToggleableColumn[] = [
 ]
 
 const visibleKeys = ref<Set<string>>(new Set(allColumns.filter(c => c.default).map(c => c.key)))
+const selectedConcurrency = ref<number | null>(null)
+const concurrencyDropdownOpen = ref(false)
 const columnDropdownOpen = ref(false)
 const columnDropdownRef = ref<HTMLElement | null>(null)
+const concurrencyDropdownRef = ref<HTMLElement | null>(null)
+
+const allData = ref<any[]>([])
 
 const myColumns = computed<Column[]>(() =>
   allColumns.filter(c => visibleKeys.value.has(c.key))
 )
+
+const availableConcurrencies = computed<number[]>(() => {
+	const values = [...new Set(allData.value.map((record) => record.concurrency).filter((value) => value != null))]
+	return values.sort((a, b) => a - b)
+})
+
+const data = computed(() => {
+	if (selectedConcurrency.value == null) {
+		return allData.value
+	}
+
+	return allData.value.filter((record) => record.concurrency === selectedConcurrency.value)
+})
 
 const optionalColumns = computed(() =>
   allColumns.filter(c => c.key !== 'name')
@@ -48,9 +67,12 @@ const handleClickOutside = (event: MouseEvent) => {
   if (columnDropdownRef.value && !columnDropdownRef.value.contains(event.target as Node)) {
     columnDropdownOpen.value = false
   }
+
+	if (concurrencyDropdownRef.value && !concurrencyDropdownRef.value.contains(event.target as Node)) {
+	concurrencyDropdownOpen.value = false
+	}
 }
 
-const data = ref<any>([])
 const specs = ref<any>([])
 const iconTrigger = ref<HTMLElement | null>(null)
 const tooltipVisible = ref(false)
@@ -94,7 +116,7 @@ onMounted(() => {
 
 	const records = Mapper.instance.backendBenchmarks?.results || []
 	for (const record of records) {
-		data.value.push({
+		allData.value.push({
 			'name': record.framework,
 			'coldStart': record.coldStartMs,
 			'coldStart_unit': 'ms',
@@ -117,16 +139,22 @@ onMounted(() => {
 			'size_unit': 'MB',
 			'errors': record.errors ?? 0,
 			'concurrency': record.concurrency ?? 'N/A',
-			'throughput': record.throughput ? (record.throughput / (1024 * 1024)).toFixed(2) : 'N/A',
+			'cpuUtilization': record.cpuUtilization != null ? Number(record.cpuUtilization).toFixed(2) : 'N/A',
+			'cpuUtilization_unit': '%',
+			'throughput': record.throughput != null ? (record.throughput / (1024 * 1024)).toFixed(2) : 'N/A',
 			'throughput_unit': 'MB/s',
 		})
 	}
+
+	selectedConcurrency.value = availableConcurrencies.value[0] ?? null
+
 	specs.value = [
 		{ label: 'DATE', value: new Date(Mapper.instance.validationBenchmarks?.date ?? new Date()).toLocaleDateString() ?? 'N/A' },
 		{ label: 'CPU', value: Mapper.instance.validationBenchmarks?.cpu ?? 'N/A' },
 		{ label: 'MEMORY', value: Mapper.instance.validationBenchmarks?.memory ?? 'N/A' },
 		{ label: 'OS', value: Mapper.instance.validationBenchmarks?.system ?? 'N/A' },
 		{ label: 'Dart', value: (Mapper.instance.validationBenchmarks?.dart ?? 'N/A').split(' ')[0] },
+		{ label: 'CPU Metric', value: 'Normalized host CPU %' },
 		{ label: 'Testing Tool', value: 'OHA 1.13.0' }
 	]
 })
@@ -166,7 +194,36 @@ onBeforeUnmount(() => {
 					</p>
 				</motion.div>
 			</div>
-			<div class="flex justify-end mb-4">
+			<div class="flex flex-wrap justify-end gap-3 mb-4">
+				<div ref="concurrencyDropdownRef" class="relative">
+					<button
+						@click="concurrencyDropdownOpen = !concurrencyDropdownOpen"
+						class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium border border-border rounded-md bg-background text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+					>
+						Concurrency: {{ selectedConcurrency ?? 'All' }}
+						<svg
+							:class="['h-3.5 w-3.5 transition-transform', concurrencyDropdownOpen ? 'rotate-180' : '']"
+							xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+						>
+							<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.584l3.71-4.354a.75.75 0 111.14.976l-4.25 5a.75.75 0 01-1.14 0l-4.25-5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+						</svg>
+					</button>
+					<div
+						v-if="concurrencyDropdownOpen"
+						class="absolute flex flex-col gap-2 right-0 mt-1.5 p-2 w-48 overflow-hidden rounded-md border border-border bg-background shadow-lg z-30"
+					>
+						<button
+							v-for="concurrency in availableConcurrencies"
+							:key="concurrency"
+							type="button"
+							class="flex w-full items-center justify-between px-3 py-2 text-xs hover:bg-muted/50 transition-colors"
+							@click="selectedConcurrency = concurrency; concurrencyDropdownOpen = false"
+						>
+							<span>Concurrency {{ concurrency }}</span>
+							<span v-if="selectedConcurrency === concurrency">✓</span>
+						</button>
+					</div>
+				</div>
 				<div ref="columnDropdownRef" class="relative">
 					<button
 						@click="columnDropdownOpen = !columnDropdownOpen"
@@ -272,6 +329,11 @@ onBeforeUnmount(() => {
 						{{ value }} <span class="text-xs text-muted-foreground">{{ record.throughput_unit }}</span>
 					</span>
 				</template>
+				<template #cell-cpuUtilization="{ record, value }">
+					<span>
+						{{ value }} <span class="text-xs text-muted-foreground">{{ record.cpuUtilization_unit }}</span>
+					</span>
+				</template>
 				<template #cell-memory="{ record, value }">
 					<span>
 						{{ value }} <span class="text-xs text-muted-foreground">{{ record.memory_unit }}</span>
@@ -303,3 +365,8 @@ onBeforeUnmount(() => {
     	</div>
     </section>
 </template>
+<style scoped>
+.border-border {
+	border-color: hsl(var(--border));
+}
+</style>

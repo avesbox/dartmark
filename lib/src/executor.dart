@@ -224,14 +224,20 @@ class Executor {
           'description': f.description,
         }).toList(),
       });
-      print('Starting HTTP benchmarks for ${config.framework}...');
-      try {
-        final result = await runner.run(config);
-        results.add(result.toMap());
-        print('HTTP benchmarks for ${config.framework} completed successfully.');
-      } catch (e) {
-        print('Error running HTTP benchmarks for ${config.framework}: $e');
-        rethrow;
+      final concurrencyLevels = config.load.concurrencyLevels;
+      for (final concurrency in concurrencyLevels) {
+        final benchmarkConfig = config.copyWith(
+          load: config.load.copyWith(concurrency: concurrency),
+        );
+        print('Starting HTTP benchmarks for ${config.framework} at concurrency $concurrency...');
+        try {
+          final result = await runner.run(benchmarkConfig);
+          results.add(result.toMap());
+          print('HTTP benchmarks for ${config.framework} at concurrency $concurrency completed successfully.');
+        } catch (e) {
+          print('Error running HTTP benchmarks for ${config.framework} at concurrency $concurrency: $e');
+          rethrow;
+        }
       }
     }
     print('All HTTP benchmarks completed.');

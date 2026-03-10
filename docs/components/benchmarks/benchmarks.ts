@@ -1,3 +1,4 @@
+// @ts-expect-error VitePress data loaders expose a generated `data` export at build time.
 import { data as charts } from '../benchmarks/charts.data'
 
 type HttpResult = {
@@ -15,6 +16,7 @@ type HttpResult = {
 	requests: number;
 	version: string;
 	cpu: string;
+	logicalProcessors: number;
 	system: string;
 	memoryUsedBytes: number;
 	memory: string;
@@ -114,7 +116,7 @@ export class Mapper {
 
 	public getBenchmarksForValidation() {
 		const results = this.validationBenchmarks?.results || [];
-		const sortedResults = results.sort((a, b) => b.benchmarks[0].avgScore - a.benchmarks[0].avgScore);
+		const sortedResults = [...results].sort((a, b) => b.benchmarks[0].avgScore - a.benchmarks[0].avgScore);
 		for (let i = 0; i < sortedResults.length; i++) {
 			sortedResults[i].benchmarks[0].avgScorePercentage = (sortedResults[i].benchmarks[0].avgScore / sortedResults[0].benchmarks[0].avgScore) * 100;
 		}
@@ -125,9 +127,18 @@ export class Mapper {
      * Finally, any singleton can define some business logic, which can be
      * executed on its instance.
      */
-    public getBenchmarksForBackend() {
+	public getAvailableHttpConcurrencies() {
 		const results = this.backendBenchmarks?.results || [];
-		const sortedResults = results.sort((a, b) => b.rps - a.rps);
+		return [...new Set(results.map((result) => result.concurrency))].sort((a, b) => a - b);
+	}
+
+	public getBenchmarksForBackend(concurrency?: number) {
+		const allResults = this.backendBenchmarks?.results || [];
+		const resolvedConcurrency = concurrency ?? this.getAvailableHttpConcurrencies()[0];
+		const results = resolvedConcurrency == null
+			? allResults
+			: allResults.filter((result) => result.concurrency === resolvedConcurrency);
+		const sortedResults = [...results].sort((a, b) => b.rps - a.rps);
 		for (let i = 0; i < sortedResults.length; i++) {
 			sortedResults[i].rpsPercentage = (sortedResults[i].rps / sortedResults[0].rps) * 100;
 		}
