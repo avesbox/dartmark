@@ -8,7 +8,7 @@ environment:
   sdk: '>=3.9.0 <4.0.0'
 
 dependencies:
-  serinus: ^2.1.5
+  serinus: ^2.1.6
 
 dev_dependencies:
   serinus_lint: ^0.1.1

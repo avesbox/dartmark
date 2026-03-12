@@ -1,6 +1,6 @@
 framework: serinus
 projectPath: frameworks/serinus
-version: 2.1.5
+version: 2.1.6
 description: Serinus is a framework for building robust and scalable Dart server-side applications. It leverges the power of OOP and the flexibility of Dart to provide a simple and efficient way to build server-side applications.
 publisher: Avesbox
 publisherUrl: https://avesbox.com
