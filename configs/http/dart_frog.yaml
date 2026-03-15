@@ -1,6 +1,6 @@
 framework: dart_frog
 projectPath: frameworks/dart_frog
-description: The standard Dart HTTP server implementation, using the `dart:io` library.
+description: A fast, minimalistic backend framework for Dart
 publisher: dart-frog.dev
 publisherUrl: https://dart-frog.dev
 version: 1.2.6
