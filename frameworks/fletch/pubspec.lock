@@ -101,10 +101,10 @@ packages:
     dependency: "direct main"
     description:
       name: fletch
-      sha256: "3b4a2db9803d6057c7b5c13429fd9dfba7805662cd86fa583feb649379db62de"
+      sha256: "373f6be6c32e253eee43bfde712e2b22a484acb97d989b6eb0e6ee0e9916c796"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.2.0"
   frontend_server_client:
     dependency: transitive
     description:

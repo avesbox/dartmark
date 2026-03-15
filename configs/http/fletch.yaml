@@ -1,7 +1,8 @@
 framework: fletch
 projectPath: frameworks/fletch
-version: 2.1.0
-description: A fast, Express-inspired HTTP framework for Dart. Build production-ready REST APIs with built-in sessions, CORS, rate limiting, and middleware support.
+version: 2.2.0
+description: A fast, Express-inspired HTTP framework for Dart. Build production-ready REST APIs 
+  with built-in sessions, CORS, rate limiting, and middleware support.
 publisher: mahawarkartikey.in
 publisherUrl: https://mahawarkartikey.in/
 repository: https://github.com/kartikey321/fletch
