@@ -4,9 +4,9 @@ version: 0.1.5
 repository: https://github.com/namzug16/netto
 build:
   command: dart
-  args: ["compile", "exe", "bin/netto_bench.dart", "-o", "build/server.exe"]
+  args: ["compile", "exe", "bin/netto_bench.dart", "-o", "bin/server.exe"]
 run:
-  command: build/server.exe
+  command: bin/server.exe
   env:
     PORT: 8081
 http:
