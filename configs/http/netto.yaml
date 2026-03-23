@@ -1,0 +1,31 @@
+framework: netto
+projectPath: frameworks/netto
+version: 0.1.5
+repository: https://github.com/namzug16/netto
+build:
+  command: dart
+  args: ["compile", "exe", "bin/netto_bench.dart", "-o", "build/server.exe"]
+run:
+  command: build/server.exe
+  env:
+    PORT: 8081
+http:
+  baseUrl: http://127.0.0.1:8081
+  endpoint: /api/echo
+  waitForReady:
+    path: /health
+    timeoutSeconds: 10
+    intervalMillis: 200
+load:
+  warmupSeconds: 3
+  durationSeconds: 15
+  concurrency: 8
+  connections: 0          # unthrottled unless you set it
+  requests: 0             # duration-based
+  timeoutSeconds: 5
+  headers:
+    - "Content-Type: application/json"
+  body: '{"hello":"world"}'
+oha:
+  binaryPath: oha
+  extraArgs: []
