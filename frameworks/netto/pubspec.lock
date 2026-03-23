@@ -210,7 +210,7 @@ packages:
     source: hosted
     version: "2.2.0"
   path:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: path
       sha256: "75cca69d1490965be98c73ceaea117e8a04dd21217b37b292c9ddbec0d955bc5"
@@ -233,30 +233,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
-  relic:
-    dependency: "direct main"
-    description:
-      name: relic
-      sha256: d917b188dd1b6838c630d1904a1e26b040e6647406f2aab01b10fdf0ca051c12
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
-  relic_core:
-    dependency: transitive
-    description:
-      name: relic_core
-      sha256: c2f7638d56fdf144a035d17eb8e93fb30fe53bd105fd81c31393f8be4f43ecdc
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
-  relic_io:
-    dependency: transitive
-    description:
-      name: relic_io
-      sha256: d64a9f309943200ec7a45b2a127cbc5abf4dd6603159a179396d66b932a15f1f
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   shelf:
     dependency: transitive
     description:

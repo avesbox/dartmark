@@ -7,7 +7,7 @@ Future<void> main(List<String> arguments) async {
     ..get('/health', (ctx) => ctx.response.string("ok"))
     ..get('/api/echo', (ctx) async {
       final body = await ctx.request.body.json();
-      return ctx.response.json(jsonEncode(body));
+      return ctx.response.json(body);
     });
 
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
