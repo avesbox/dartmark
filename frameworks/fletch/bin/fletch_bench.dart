@@ -12,7 +12,7 @@ Future<void> main() async {
 
   app.get('/health', (req, res) => res.text('ok'));
 
-  // Echo raw body without JSON parse/re-encode — same work as the dart:io bench.
+  // Echo request payload back as JSON using Fletch body parsing + JSON response encoding.
   app.get('/api/echo', (req, res) async {
     final body = await req.body;
     res.json(body as Map<String, dynamic>);
